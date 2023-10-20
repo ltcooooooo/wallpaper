@@ -1,0 +1,14 @@
+{
+	"ignore": [
+		"node_modules",
+		"dist",
+		"out",
+		"build"
+	],
+	"colours": true,
+	"verbose": true,
+	"watch": [
+		"*.*"
+	],
+	"ext": "js"
+}
