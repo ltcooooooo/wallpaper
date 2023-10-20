@@ -1,34 +1,24 @@
 # wallpaper
 
-An Electron application with Vue
+> 壁纸软件，软件内部壁纸来源：[https://wallhaven.cc/](https://wallhaven.cc/)
 
-## Recommended IDE Setup
+## 下载
 
-- [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
+### Windows
 
-## Project Setup
++ [exe-安装程序](https://gitee.com/T-_-C/wallpaper/releases/download/V1.0/wallpaper-1.0.0-setup.exe)
++ [rar-解压即用](https://gitee.com/T-_-C/wallpaper/releases/download/V1.0/wallpaper-win-1.0.0.rar)
 
-### Install
+### MacOS
 
-```bash
-$ pnpm install
-```
+> 暂未测试mac平台
 
-### Development
+## 打包
 
-```bash
-$ pnpm dev
-```
+> 根据需要自己打包
 
-### Build
+1. 克隆或下载代码到本地
+2. 进入项目目录
+3. 安装依赖包 `pnpm install  `
+4. 根据个人需求打包
 
-```bash
-# For windows
-$ pnpm build:win
-
-# For macOS
-$ pnpm build:mac
-
-# For Linux
-$ pnpm build:linux
-```
