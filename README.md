@@ -2,6 +2,10 @@
 
 > 壁纸软件，软件内部壁纸来源：[https://wallhaven.cc/](https://wallhaven.cc/)
 
+## 预览
+
+![](preview.gif)
+
 ## 下载
 
 ### Windows
