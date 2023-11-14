@@ -15,7 +15,10 @@
 
 ### MacOS
 
-> 暂未测试mac平台
+> 不能上传大于100m的资源，下载分包1和2之后解压使用
+
++ [zip分包1](https://gitee.com/T-_-C/wallpaper/releases/download/V1.0/wallpaper-1.0.0.dmg.zip.001)
++ [zip分包2](https://gitee.com/T-_-C/wallpaper/releases/download/V1.0/wallpaper-1.0.0.dmg.zip.002)
 
 ## 打包
 
