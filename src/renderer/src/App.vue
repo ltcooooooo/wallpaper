@@ -1,27 +1,31 @@
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
-import axios from 'axios'
 import Card from './components/Card.vue'
+import { getListApi } from './api/request'
 
 const list = ref([])
-const wallpaperEl = ref(null)
 const page = ref(1)
+const totalPage = ref(3)
 const loading = ref(true)
 const reloading = ref(false)
 const noMore = ref(false)
-// const wallpaperPath = ref('未设置')
-const config = ref(null)
-const totalPage = ref(3)
 
+// 从本地存储中获取配置信息，如果没有则使用默认配置
+const config = ref(null)
 config.value = JSON.parse(localStorage.getItem('config')) || {
   useTips: true,
   downloadTips: true,
   wallpaperPath: '未设置'
 }
 const wallpaperFolder = computed(() => '当前壁纸保存地址为：' + config.value.wallpaperPath)
+// 监听配置的变化，保存到本地存储中
 watch(config, (n) => saveConfig(), { deep: true, immediate: true })
+
+//初始获取壁纸列表数据
 getList(page.value)
 
+// 监听滚动事件，判断是否需要加载更多数据
+const wallpaperEl = ref(null)
 onMounted(() => {
   wallpaperEl.value.addEventListener('scroll', function () {
     const top = this.scrollHeight - this.scrollTop
@@ -35,11 +39,14 @@ onMounted(() => {
   })
 })
 
+// 重新加载壁纸列表数据
 function reloadingFn() {
   loading.value = true
   reloading.value = false
   getList(page.value)
 }
+
+// 设置默认壁纸保存地址
 async function setDefaultSavePath() {
   const res = await window.api.setDefaultSavePath(config.value.wallpaperPath)
   if (!res.canceled) {
@@ -47,6 +54,7 @@ async function setDefaultSavePath() {
   }
 }
 
+// 打开壁纸保存地址
 async function openWallpaperSaveFolder() {
   const res = await window.api.openWallpaperSaveFolder(config.value.wallpaperPath)
   if (res !== '') {
@@ -57,25 +65,30 @@ async function openWallpaperSaveFolder() {
   }
 }
 
+//退出应用
 function quit() {
   window.api.quit()
 }
 
+//最小化应用
 function min() {
   window.api.minimize()
 }
 
+// 关闭提示
 function closeTips(arg) {
   config.value[arg] = false
   console.log(config)
 }
 
+// 保存配置到本地存储
 function saveConfig() {
   localStorage.setItem('config', JSON.stringify(config.value))
 }
+// 获取壁纸列表
 async function getList(page) {
   page = page || '1'
-  axios.get(`http://154.12.35.130:8866/list?page=${page}`).then(
+  getListApi(page).then(
     (res) => {
       list.value = [...list.value, ...res.data.data]
       loading.value = false
@@ -83,7 +96,7 @@ async function getList(page) {
       if (res.data.totalPage) totalPage.value = res.data.totalPage
     },
     (err) => {
-      console.log('getLIstErr', err)
+      console.log('getListErr', err)
       loading.value = false
       reloading.value = true
       ElMessage.error({
@@ -111,8 +124,8 @@ async function getList(page) {
             <el-icon :size="16"><Folder /></el-icon>
           </div>
         </el-tooltip>
-        <div class="min">
-          <el-icon :size="16" @click="min"><SemiSelect /></el-icon>
+        <div class="min" @click="min">
+          <el-icon :size="16"><SemiSelect /></el-icon>
         </div>
         <div class="quit" @click="quit">
           <el-icon :size="16"><CloseBold /></el-icon>
@@ -196,7 +209,7 @@ main {
   width: 100%;
   display: flex;
   padding: 3px;
-  justify-content: space-around;
+  justify-content: space-evenly;
   flex-wrap: wrap;
   width: 96%;
   height: calc(100vh - 50px);

@@ -1,50 +1,24 @@
-<template>
-  <div id="card" ref="card">
-    <img :src="imgSrc" alt="" />
-    <div class="menu">
-      <div class="size">{{ data.size }}</div>
-      <div class="buttons">
-        <el-button :loading="downloading" type="success" size="small" plain @click="download">
-          <el-icon v-show="!downloading" :size="16" style="font-weight: bold">
-            <Download />
-          </el-icon>
-        </el-button>
-        <el-button :loading="downloading" type="primary" size="small" plain @click="use">
-          <el-icon v-show="!downloading" :size="16">
-            <Platform />
-          </el-icon>
-        </el-button>
-      </div>
-    </div>
-    <div class="loading" v-if="loading">
-      <img src="@renderer/assets/image/loading.png" alt="" />
-    </div>
-  </div>
-</template>
-
 <script setup>
 import { ref, h } from 'vue'
 import { Folder, Picture } from '@element-plus/icons-vue'
-import axios from 'axios'
+import { getWallpaper } from '../api/request';
 const { data, config, closeTips } = defineProps(['data', 'config', 'closeTips'])
 const imgSrc = ref('')
 const loading = ref(true)
 const downloading = ref(false)
-axios
-  .get('http://154.12.35.130:8866/wallpaper', {
-    params: {
-      url: encodeURIComponent(data.smallSrc)
-    },
-    responseType: 'arraybuffer'
-  })
-  .then((res) => {
-    const blob = new Blob([res.data], { type: 'image/jpeg' })
-    const url = URL.createObjectURL(blob)
-    imgSrc.value = url
-    loading.value = false
-  })
 
+// 获取壁纸缩略图
+getWallpaper(data.smallSrc)
+.then((res) => {
+  const blob = new Blob([res.data], { type: 'image/jpeg' })
+  const url = URL.createObjectURL(blob)
+  imgSrc.value = url
+  loading.value = false
+})
+
+//设置为壁纸
 function use() {
+  //如果是第一次使用软件弹出提示
   if (config.useTips) {
     ElMessageBox({
       title: '功能提示',
@@ -66,11 +40,13 @@ function use() {
       }
     })
   } else {
+    //如果没有设置壁纸保存位置提示设置保存位置
     if (config.wallpaperPath === '未设置')
       return ElMessage.warning({
         message: '请先在右上角处设置壁纸保存位置',
         offset: 40
       })
+      //弹出开始下载提示之后开始下载
     ElMessage.success({
       message: '开始下载壁纸',
       offset: 40
@@ -80,7 +56,9 @@ function use() {
   }
 }
 
+//下载壁纸
 function download() {
+  //如果是第一次使用软件弹出提示
   if (config.downloadTips) {
     ElMessageBox({
       title: '功能提示',
@@ -107,11 +85,13 @@ function download() {
       }
     })
   } else {
+    //如果没有设置壁纸保存位置提示设置保存位置
     if (config.wallpaperPath === '未设置')
       return ElMessage.warning({
         message: '请先在右上角处设置壁纸保存位置',
         offset: 40
       })
+      //弹出开始下载提示之后开始下载
     ElMessage.success({
       message: '开始下载壁纸',
       offset: 40
@@ -121,6 +101,7 @@ function download() {
   }
 }
 
+//下载结果
 function downloadResult(res) {
   downloading.value = false
   console.log('下载结果', res)
@@ -137,6 +118,30 @@ function downloadResult(res) {
   }
 }
 </script>
+
+<template>
+  <div id="card" ref="card">
+    <img :src="imgSrc" alt="" />
+    <div class="menu">
+      <div class="size">{{ data.size }}</div>
+      <div class="buttons">
+        <el-button :loading="downloading" type="success" size="small" plain @click="download">
+          <el-icon v-show="!downloading" :size="16" style="font-weight: bold">
+            <Download />
+          </el-icon>
+        </el-button>
+        <el-button :loading="downloading" type="primary" size="small" plain @click="use">
+          <el-icon v-show="!downloading" :size="16">
+            <Platform />
+          </el-icon>
+        </el-button>
+      </div>
+    </div>
+    <div class="loading" v-if="loading">
+      <img src="@renderer/assets/image/loading.png" alt="" />
+    </div>
+  </div>
+</template>
 
 <style lang="scss">
 #card {

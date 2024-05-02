@@ -3,7 +3,6 @@ import axios from 'axios'
 import wallpaper from 'wallpaper'
 import fs from 'fs'
 
-
 ipcMain.handle('set-default-save-path', async (event, path) => {
     const win = BrowserWindow.fromWebContents(event.sender)
     return await dialog.showOpenDialog(win, {
@@ -41,7 +40,7 @@ async function downloadWallpaper(url, path) {
     const name = last.replace(/wallhaven-/, '')
     const filePath = path + (/\//.test(path) ? "/" : "\\") + name
     try {
-        const res = await axios.get('http://154.12.35.130:8866/wallpaper', {
+        const res = await axios.get('http://tianci.run:8866/wallpaper', {
             params: {
                 url: encodeURIComponent(url)
             },
@@ -57,6 +56,7 @@ async function downloadWallpaper(url, path) {
         }
     }
     catch (err) {
+        console.log(err)
         return Promise.resolve({ success: 0, message: "壁纸下载失败" })
     }
 }
