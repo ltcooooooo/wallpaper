@@ -208,10 +208,10 @@ main {
 #wallpaper {
   width: 100%;
   display: flex;
-  padding: 3px;
+  // padding: 3px;
+  // width: 96%;
   justify-content: space-evenly;
   flex-wrap: wrap;
-  width: 96%;
   height: calc(100vh - 50px);
   margin: 0 auto;
   overflow: scroll;
