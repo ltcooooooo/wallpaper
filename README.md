@@ -11,7 +11,6 @@
 ### Windows
 
 + [exe-安装程序](https://gitee.com/T-_-C/wallpaper/releases/download/V1.0/wallpaper-1.0.0-setup.exe)
-+ [rar-解压即用](https://gitee.com/T-_-C/wallpaper/releases/download/V1.0/wallpaper-win-1.0.0.rar)
 
 ### MacOS
 
