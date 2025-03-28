@@ -1,20 +1,13 @@
 <script setup>
 import { ref, h } from 'vue'
 import { Folder, Picture } from '@element-plus/icons-vue'
-import { getWallpaper } from '../api/request';
 const { data, config, closeTips } = defineProps(['data', 'config', 'closeTips'])
 const imgSrc = ref('')
 const loading = ref(true)
 const downloading = ref(false)
 
-// 获取壁纸缩略图
-getWallpaper(data.smallSrc)
-.then((res) => {
-  const blob = new Blob([res.data], { type: 'image/jpeg' })
-  const url = URL.createObjectURL(blob)
-  imgSrc.value = url
-  loading.value = false
-})
+imgSrc.value = data.smallSrc
+loading.value = false
 
 //设置为壁纸
 function use() {

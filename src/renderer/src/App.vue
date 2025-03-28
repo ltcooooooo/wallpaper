@@ -90,7 +90,17 @@ async function getList(page) {
   page = page || '1'
   getListApi(page).then(
     (res) => {
-      list.value = [...list.value, ...res.data.data]
+      const images = res.data.data.images
+      for (const item of images) {
+        console.log(item)
+        const smallSrcUrl = new URL(item.smallSrc)
+        const smallSrc = 'http://tianci.run/wallhaven/th' + smallSrcUrl.pathname
+        const imgSrcUrl = new URL(item.imgSrc)
+        const imgSrc = 'http://tianci.run/wallhaven/w' + imgSrcUrl.pathname
+        item.smallSrc = smallSrc
+        item.imgSrc = imgSrc
+      }
+      list.value = [...list.value, ...images]
       loading.value = false
       reloading.value = false
       if (res.data.totalPage) totalPage.value = res.data.totalPage

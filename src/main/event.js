@@ -40,10 +40,7 @@ async function downloadWallpaper(url, path) {
     const name = last.replace(/wallhaven-/, '')
     const filePath = path + (/\//.test(path) ? "/" : "\\") + name
     try {
-        const res = await axios.get('http://tianci.run:8866/wallpaper', {
-            params: {
-                url: encodeURIComponent(url)
-            },
+        const res = await axios.get(url, {
             responseType: 'arraybuffer'
         })
         const imageBuffer = Buffer.from(res.data);
