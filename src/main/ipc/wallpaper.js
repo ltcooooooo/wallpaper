@@ -1,0 +1,47 @@
+import { ipcMain } from "electron";
+import axios from 'axios'
+import wallpaper from 'wallpaper'
+import fs from 'fs'
+
+function registerWallpaperIpc() {
+    ipcMain.handle('use-wallpaper', async (event, url, path) => {
+        const downloadResult = await downloadWallpaper(url, path)
+        if (!downloadResult.success) return downloadResult
+        try {
+            const setWallpaperReslut = await wallpaper.set(downloadResult.filePath, { screen: 'all' })
+            return Promise.resolve({ success: true, message: '设置壁纸成功' })
+        }
+        catch (err) {
+            return Promise.resolve({ success: false, message: "设置壁纸失败" })
+        }
+    })
+    ipcMain.handle('download-wallpaper', async (event, url, path) => {
+        return await downloadWallpaper(url, path)
+    })
+
+    async function downloadWallpaper(url, path) {
+        const urlSplit = url.split("/")
+        const last = urlSplit[urlSplit.length - 1]
+        const name = last.replace(/wallhaven-/, '')
+        const filePath = path + (/\//.test(path) ? "/" : "\\") + name
+        try {
+            const res = await axios.get(url, {
+                responseType: 'arraybuffer'
+            })
+            const imageBuffer = Buffer.from(res.data);
+            try {
+                const result = fs.writeFileSync(filePath, imageBuffer)
+                return Promise.resolve({ success: true, message: '下载成功', filePath })
+            }
+            catch (err) {
+                return Promise.resolve({ success: false, message: '壁纸下载失败,请检查壁纸文件夹路径' })
+            }
+        }
+        catch (err) {
+            console.log(err)
+            return Promise.resolve({ success: false, message: "壁纸下载失败" })
+        }
+    }
+}
+
+export default registerWallpaperIpc

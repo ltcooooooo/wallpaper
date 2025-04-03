@@ -1,15 +1,15 @@
 {
   "name": "wallpaper",
-  "version": "1.0.0",
-  "description": "An Electron application with Vue",
+  "version": "1.1.3",
+  "description": "一个壁纸软件",
   "main": "./out/main/index.js",
-  "author": "example.com",
-  "homepage": "https://www.electronjs.org",
+  "author": "liangtianci",
+  "homepage": "",
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
     "start": "electron-vite preview",
-    "dev": "nodemon --exec electron-vite dev",
+    "dev": "electron-vite dev",
     "build": "electron-vite build",
     "postinstall": "electron-builder install-app-deps",
     "build:win": "npm run build && electron-builder --win --config",
@@ -19,9 +19,12 @@
   "dependencies": {
     "@electron-toolkit/preload": "^2.0.0",
     "@electron-toolkit/utils": "^2.0.0",
+    "@tailwindcss/postcss": "^4.0.17",
     "axios": "^1.5.1",
+    "electron-log": "^5.3.3",
     "electron-updater": "^6.1.1",
-    "element-plus": "^2.4.1",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.0.17",
     "wallpaper": "5"
   },
   "devDependencies": {
@@ -35,7 +38,6 @@
     "eslint": "^8.47.0",
     "eslint-plugin-vue": "^9.17.0",
     "prettier": "^3.0.2",
-    "sass": "^1.69.3",
     "unplugin-auto-import": "^0.16.6",
     "unplugin-vue-components": "^0.25.2",
     "vite": "^4.4.9",

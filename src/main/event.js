@@ -16,10 +16,10 @@ ipcMain.handle('use-wallpaper', async (event, url, path) => {
     if (!downloadResult.success) return downloadResult
     try {
         const setWallpaperReslut = await wallpaper.set(downloadResult.filePath, { screen: 'all' })
-        return Promise.resolve({ success: 1, message: '设置壁纸成功' })
+        return Promise.resolve({ success: true, message: '设置壁纸成功' })
     }
     catch (err) {
-        return Promise.resolve({ success: 0, message: "设置壁纸失败" })
+        return Promise.resolve({ success: false, message: "设置壁纸失败" })
     }
 })
 ipcMain.handle('download-wallpaper', async (event, url, path) => {
@@ -46,14 +46,14 @@ async function downloadWallpaper(url, path) {
         const imageBuffer = Buffer.from(res.data);
         try {
             const result = fs.writeFileSync(filePath, imageBuffer)
-            return Promise.resolve({ success: 1, message: '下载成功', filePath })
+            return Promise.resolve({ success: true, message: '下载成功', filePath })
         }
         catch (err) {
-            return Promise.resolve({ success: 0, message: '壁纸下载失败,请检查壁纸文件夹路径' })
+            return Promise.resolve({ success: false, message: '壁纸下载失败,请检查壁纸文件夹路径' })
         }
     }
     catch (err) {
         console.log(err)
-        return Promise.resolve({ success: 0, message: "壁纸下载失败" })
+        return Promise.resolve({ success: false, message: "壁纸下载失败" })
     }
 }

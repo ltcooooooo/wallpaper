@@ -1,4 +1,4 @@
-appId: com.ltc.wallpaper
+appId: run.tianci.wallpaper
 productName: wallpaper
 directories:
   buildResources: build
@@ -41,4 +41,4 @@ appImage:
 npmRebuild: false
 publish:
   provider: generic
-  url: https://example.com/auto-updates
+  url: http://127.0.0.1:5500/auto-updates
