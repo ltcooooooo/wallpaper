@@ -4,8 +4,10 @@ import HomeView from '../views/Home.vue'
 // import AboutView from './AboutView.vue'
 
 const routes = [
-  { path: '/', component: HomeView },
-//   { path: '/about', component: AboutView },
+  {
+    path: '/', component: HomeView,
+    meta: { keepAlive: true }
+  },
 ]
 
 const router = createRouter({

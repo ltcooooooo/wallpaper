@@ -1,21 +1,23 @@
 @import "tailwindcss";
 * {
-  margin: 0;
-  padding: 0;
   user-select: none;
   -webkit-user-drag: none;
 }
 
-*::-webkit-scrollbar {
-  display: none;
+#app{
+  border-radius: 8px;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  background-color: #f7f9fc;
+  border: 1px solid rgba(117, 117, 117, .4);
+  box-sizing: border-box;
 }
 
-@keyframes rotate {
-  0% {
-    transform: rotate(0deg);
-  }
+.drag {
+  -webkit-app-region: drag;
+}
 
-  100% {
-    transform: rotate(360deg);
-  }
+.no-drag {
+  -webkit-app-region:no-drag;
 }

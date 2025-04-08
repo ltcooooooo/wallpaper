@@ -10,7 +10,7 @@ import registerIpc from './ipc/index'
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
-    width: 638,
+    width: 600,
     height: 500,
     minHeight: 500,
     minWidth: 350,
@@ -18,19 +18,20 @@ function createWindow() {
     show: false,
     autoHideMenuBar: true,
     frame: false,
+    transparent: true,
     minimizable: false,
     maximizable: false,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false,
+      spellcheck:false,
       webSecurity: import.meta.env.PROD == true
     }
   })
   import.meta.env.PROD == false && mainWindow.openDevTools()
 
   mainWindow.on('ready-to-show', () => {
-    registerUpdateService().checkForUpdates()
     mainWindow.show()
   })
 
@@ -60,6 +61,7 @@ app.whenReady().then(() => {
   globalMountElog()
   registerIpc()
   createWindow()
+  registerUpdateService().checkForUpdates()
 })
 
 app.on('window-all-closed', () => {

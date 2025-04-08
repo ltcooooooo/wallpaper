@@ -7,8 +7,8 @@ const api = {
   getDefaultSavePath: () => {
     return resolve(homedir(), 'Download')
   },
-  setDefaultSavePath: async (path) => {
-    return await ipcRenderer.invoke('set-default-save-path', path)
+  setSavePath: async (path) => {
+    return await ipcRenderer.invoke('set-save-path', path)
   },
   openWallpaperSaveFolder: async (path) => {
     return await shell.openPath(path)
