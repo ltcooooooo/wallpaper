@@ -5,8 +5,8 @@ import { join } from 'path'
 import icon from '../../resources/icon.png?asset'
 
 import globalMountElog from './core/logger'
-import registerIpc from './ipc/index'
 import registerUpdateService from './core/update'
+import registerIpc from './ipc/index'
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
@@ -52,13 +52,14 @@ app.whenReady().then(() => {
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
-  registerIpc()
-  globalMountElog()
-  createWindow()
 
   app.on('activate', function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
+
+  globalMountElog()
+  registerIpc()
+  createWindow()
 })
 
 app.on('window-all-closed', () => {
