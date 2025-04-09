@@ -1,4 +1,9 @@
 @import "tailwindcss";
+
+@theme{
+  --breakpoint-md: 59rem;
+}
+
 * {
   user-select: none;
   -webkit-user-drag: none;

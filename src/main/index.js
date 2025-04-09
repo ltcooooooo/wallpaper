@@ -10,11 +10,11 @@ import registerIpc from './ipc/index'
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
-    width: 600,
+    width: 650,
     height: 500,
     minHeight: 500,
-    minWidth: 350,
-    maxWidth: 1000,
+    minWidth: 340,
+    maxWidth: 1280,
     show: false,
     autoHideMenuBar: true,
     frame: false,

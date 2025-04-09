@@ -11,14 +11,19 @@ declare module 'vue' {
     ElButton: typeof import('element-plus/es')['ElButton']
     ElButtonGroup: typeof import('element-plus/es')['ElButtonGroup']
     ElIcon: typeof import('element-plus/es')['ElIcon']
+    ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
     ElText: typeof import('element-plus/es')['ElText']
     IEpClose: typeof import('~icons/ep/close')['default']
     IEpFolderOpened: typeof import('~icons/ep/folder-opened')['default']
+    IEpLoading: typeof import('~icons/ep/loading')['default']
     IEpMinus: typeof import('~icons/ep/minus')['default']
     IEpStar: typeof import('~icons/ep/star')['default']
     IEpStarFilled: typeof import('~icons/ep/star-filled')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Title: typeof import('./src/components/Title.vue')['default']
+  }
+  export interface ComponentCustomProperties {
+    vInfiniteScroll: typeof import('element-plus/es')['ElInfiniteScroll']
   }
 }
