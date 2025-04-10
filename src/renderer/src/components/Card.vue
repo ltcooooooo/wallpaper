@@ -6,5 +6,5 @@
 <script setup>
 import { defineProps } from 'vue'
 const { image } = defineProps(['image'])
-console.log('image', image.smallSrc)
+// console.log('image', image.smallSrc)
 </script>
