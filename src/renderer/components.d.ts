@@ -10,23 +10,21 @@ declare module 'vue' {
     Card: typeof import('./src/components/Card.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElButtonGroup: typeof import('element-plus/es')['ElButtonGroup']
-    ElIcon: typeof import('element-plus/es')['ElIcon']
     ElOption: typeof import('element-plus/es')['ElOption']
     ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
     ElSelect: typeof import('element-plus/es')['ElSelect']
     ElText: typeof import('element-plus/es')['ElText']
     IEpClose: typeof import('~icons/ep/close')['default']
+    IEpDownload: typeof import('~icons/ep/download')['default']
     IEpFolderOpened: typeof import('~icons/ep/folder-opened')['default']
     IEpLoading: typeof import('~icons/ep/loading')['default']
     IEpMinus: typeof import('~icons/ep/minus')['default']
+    IEpPlatform: typeof import('~icons/ep/platform')['default']
     IEpRefresh: typeof import('~icons/ep/refresh')['default']
     IEpStar: typeof import('~icons/ep/star')['default']
     IEpStarFilled: typeof import('~icons/ep/star-filled')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Title: typeof import('./src/components/Title.vue')['default']
-  }
-  export interface ComponentCustomProperties {
-    vInfiniteScroll: typeof import('element-plus/es')['ElInfiniteScroll']
   }
 }

@@ -13,13 +13,11 @@ const api = {
   openWallpaperSaveFolder: async (path) => {
     return await shell.openPath(path)
   },
-  useWallpaper: async (url, wallpaperPath, callback) => {
-    const res = await ipcRenderer.invoke('use-wallpaper', url, wallpaperPath)
-    callback(res)
+  useWallpaper: async (url, wallpaperPath) => {
+    return await ipcRenderer.invoke('use-wallpaper', url, wallpaperPath)
   },
-  downloadWallpaper: async (url, wallpaperPath, callback) => {
-    const res = await ipcRenderer.invoke('download-wallpaper', url, wallpaperPath)
-    callback(res)
+  downloadWallpaper: async (url, wallpaperPath) => {
+    return await ipcRenderer.invoke('download-wallpaper', url, wallpaperPath)
   },
   quit: () => {
     ipcRenderer.send("quit")
@@ -34,11 +32,11 @@ const api = {
 if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('electron', electronAPI)
-    contextBridge.exposeInMainWorld('api', api)
+    contextBridge.exposeInMainWorld('electronAPI', api)
   } catch (error) {
     console.error(error)
   }
 } else {
   window.electron = electronAPI
-  window.api = api
+  window.electronAPI = api
 }
