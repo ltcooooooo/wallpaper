@@ -15,7 +15,6 @@ export default ({ wallpaperListScrollRef, wallpaperListRef, params }) => {
 
     //获取壁纸列表
     async function getWallpaperList() {
-        console.log(wallpaperList.page)
         params.page = wallpaperList.page
         try {
             const list = await getWallhavenList(params)

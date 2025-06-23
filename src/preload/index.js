@@ -1,11 +1,14 @@
-import { contextBridge, ipcRenderer, shell } from 'electron'
+import { contextBridge, ipcRenderer, shell, app } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 import { resolve } from 'path'
 import { homedir } from 'os'
 // Custom APIs for renderer
 const api = {
-  getDefaultSavePath: () => {
-    return resolve(homedir(), 'Download')
+  getSettingConfig: async () => {
+    return await ipcRenderer.invoke('get-setting-config')
+  },
+  setSettingConfig: async (value) => {
+    return await ipcRenderer.send('set-setting-config', value)
   },
   setSavePath: async (path) => {
     return await ipcRenderer.invoke('set-save-path', path)

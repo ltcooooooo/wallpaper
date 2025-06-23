@@ -98,7 +98,6 @@ export default () => {
         params.categories = categoriesStr
         //生成一个英文加字母的6位随机字符串
         if (params.sorting === 'random') params.seed = Math.random().toString(36).substring(2, 8)
-            console.log('params.seed', params.seed)
         return params
     }
     return { params, showTopRange, wallpaperFilter, categoriesChange, refreshList, formatParams }

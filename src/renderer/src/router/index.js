@@ -1,13 +1,16 @@
 import { createWebHashHistory, createRouter } from 'vue-router'
 
 import ListView from '../views/List.vue'
-// import AboutView from './AboutView.vue'
 
 const routes = [
   {
     path: '/', component: ListView,
-    meta: { keepAlive: true }
+    name: 'list'
   },
+  {
+    path: '/setting', component: () => import('../views/Setting.vue'),
+    name: 'setting',
+  }
 ]
 
 const router = createRouter({

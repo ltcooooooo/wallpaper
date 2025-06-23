@@ -10,7 +10,6 @@ const request = axios.create({
 //响应拦截器
 request.interceptors.response.use(function (response) {
   // 对响应数据做点什么
-  console.log('响应拦截器',response)
   if(response.data.status){
     return response.data.data;
   }else{

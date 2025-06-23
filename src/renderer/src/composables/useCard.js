@@ -1,15 +1,14 @@
 import MyElMessage from '../common/MyElMessage'
 import { ref } from 'vue'
+import useSettingStore from '@renderer/store/setting'
 export default (image) => {
     const isLoading = ref(false)
-    console.log(image)
-    function setWallpaper() {
-        // window.electronAPI
-    }
+    const { setting } = useSettingStore()
     async function downloadWallpaper() {
+        console.log('downloadWallpaper',setting.wallpaperSavePath)
         isLoading.value = true
         try {
-            const downloadResult = await window.electronAPI.downloadWallpaper(image.imgSrc, 'D:\\Users\\w9038143\\Pictures')
+            const downloadResult = await window.electronAPI.downloadWallpaper(image.imgSrc, setting.wallpaperSavePath)
             isLoading.value = false
             MyElMessage({
                 message: downloadResult.message,
@@ -27,7 +26,7 @@ export default (image) => {
     async function setWallpaper() {
         isLoading.value = true
         try {
-            const downloadResult = await window.electronAPI.useWallpaper(image.imgSrc, 'D:\\Users\\w9038143\\Pictures')
+            const downloadResult = await window.electronAPI.useWallpaper(image.imgSrc, setting.wallpaperSavePath)
             isLoading.value = false
             MyElMessage({
                 message: downloadResult.message,

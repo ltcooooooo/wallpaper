@@ -13,7 +13,7 @@ function createWindow() {
     width: 970,
     height: 716,
     minHeight: 500,
-    minWidth: 340,
+    minWidth: 650,
     maxWidth: 1280,
     show: false,
     autoHideMenuBar: true,

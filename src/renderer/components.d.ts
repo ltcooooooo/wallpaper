@@ -21,6 +21,7 @@ declare module 'vue' {
     IEpMinus: typeof import('~icons/ep/minus')['default']
     IEpPlatform: typeof import('~icons/ep/platform')['default']
     IEpRefresh: typeof import('~icons/ep/refresh')['default']
+    IEpSetting: typeof import('~icons/ep/setting')['default']
     IEpStar: typeof import('~icons/ep/star')['default']
     IEpStarFilled: typeof import('~icons/ep/star-filled')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
