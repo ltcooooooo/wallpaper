@@ -61,7 +61,7 @@ app.whenReady().then(() => {
   globalMountElog()
   registerIpc()
   createWindow()
-  registerUpdateService().checkForUpdates()
+  import.meta.env.PROD && registerUpdateService().checkForUpdates()
 })
 
 app.on('window-all-closed', () => {

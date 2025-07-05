@@ -10,7 +10,7 @@
         <section class="right no-drag flex gap-[20px]">
             <el-button-group class="relative">
                 <el-button color="#f0f4f9"><i-ep-star /></el-button>
-                <el-button color="#f0f4f9"><i-ep-folder-opened /></el-button>
+                <el-button @click="$router.push('/local')" color="#f0f4f9"><i-ep-folder-opened /></el-button>
                 <el-button @click="$router.push('/setting')" color="#f0f4f9"><i-ep-setting/></el-button>
                 <div class="line absolute w-[0.5px] h-[50%] bg-[rgba(0,0,0,0.1)] right-[-10px] top-1/2 translate-[-50%]">
                 </div>

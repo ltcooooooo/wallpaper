@@ -19,7 +19,7 @@
         </section>
         <el-scrollbar @scroll="wallpaperListScroll" ref="wallpaperListScrollRef">
             <div ref="wallpaperListRef"
-                class="h-full grid p-4 pt-0 gap-3 justify-items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 overflow-auto">
+                class="h-full flex flex-wrap justify-center p-4 pt-0 gap-3 overflow-auto">
                 <div class="w-75 h-50 rounded-md overflow-hidden shadow-xl transition-all hover:shadow-2xl hover:translate-y-[-2px]"
                     v-for="item in wallpaperList.images" :key="item.imgSrc">
                     <Card :image="item" />

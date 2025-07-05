@@ -9,9 +9,6 @@ function registerSettingIpc() {
             properties: ['openDirectory', 'createDirectory']
         })
     })
-    ipcMain.handle('get-default-save-path', async (event, path) => {
-        return app.getPath('pictures')
-    })
 }
 
 export default registerSettingIpc

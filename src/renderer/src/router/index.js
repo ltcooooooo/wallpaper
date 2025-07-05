@@ -10,6 +10,10 @@ const routes = [
   {
     path: '/setting', component: () => import('../views/Setting.vue'),
     name: 'setting',
+  },
+  {
+    path: '/local', component: () => import('../views/Local.vue'),
+    name: 'local',
   }
 ]
 

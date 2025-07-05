@@ -1,21 +1,23 @@
 <template>
-    <section class="card w-full h-full relative group">
+    <section class="card w-full h-full relative group animate__animated" :class="{'animate__fadeOut': isDel}">
         <img :src="image.smallSrc" alt="" class="object-cover min-h-full min-w-full">
         <section
             class="absolute bottom-0 left-0 bg-[rgba(0,0,0,.4)] text-xs flex items-center justify-between px-3 w-full h-9 translate-y-[100%]  group-hover:translate-y-0 transition">
             <div class="text-white">{{ image.size }}</div>
             <div class="text-white">
-                <el-button type="warning" size="small"><i-ep-star-filled /></el-button>
-                <el-button type="success" size="small" @click="downloadWallpaper" :loading="isLoading"><i-ep-download v-show="!isLoading" /></el-button>
-                <el-button type="primary" size="small" @click="setWallpaper" :loading="isLoading"><i-ep-platform v-show="!isLoading" /></el-button>
+                <el-button v-if="!isLocal" type="warning" size="small"><i-ep-star-filled /></el-button>
+                <el-button v-if="!isLocal" type="success" size="small" @click="downloadWallpaper" :loading="isLoading"><i-ep-download v-show="!isLoading" /></el-button>
+                <el-button type="primary" size="small" @click="setWallpaper({ isLocal })" :loading="isLoading"><i-ep-platform v-show="!isLoading" /></el-button>
+                <el-button v-if="isLocal" type="danger" size="small" @click="delLocalWallpaper" :loading="isLoading"><i-ep-delete v-show="!isLoading" /></el-button>
             </div>
         </section>
     </section>
 </template>
 <script setup>
 import useCard from '../composables/useCard'
-const { image } = defineProps(['image'])
-const { isLoading, downloadWallpaper, setWallpaper } = useCard(image)
+const emit = defineEmits(['delWallpaper'])
+const { image, isLocal } = defineProps(['image', 'isLocal'])
+const { isLoading, isDel, downloadWallpaper, setWallpaper, delLocalWallpaper } = useCard(image, emit)
 </script>
 <style scoped>
 :deep(.el-button--small) {

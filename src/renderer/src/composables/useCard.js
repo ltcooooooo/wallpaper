@@ -1,45 +1,54 @@
 import MyElMessage from '../common/MyElMessage'
 import { ref } from 'vue'
 import useSettingStore from '@renderer/store/setting'
-export default (image) => {
+
+export default (image, emit) => {
     const isLoading = ref(false)
+    const isDel = ref(false)
     const { setting } = useSettingStore()
     async function downloadWallpaper() {
-        console.log('downloadWallpaper',setting.wallpaperSavePath)
+        console.log('downloadWallpaper', setting.wallpaperSavePath)
         isLoading.value = true
-        try {
-            const downloadResult = await window.electronAPI.downloadWallpaper(image.imgSrc, setting.wallpaperSavePath)
-            isLoading.value = false
-            MyElMessage({
-                message: downloadResult.message,
-                type: 'success',
-            })
-        }catch (error) {
-            isLoading.value = false
-            ElMessage({
-                message: error.message,
-                type: 'error',
-            })
-        }
-        
+        const downloadResult = await window.electronAPI.downloadWallpaper(image.imgSrc, setting.wallpaperSavePath)
+        isLoading.value = false
+        MyElMessage({
+            message: downloadResult.message,
+            type: downloadResult.success ? 'success' : 'error',
+        })
+
     }
-    async function setWallpaper() {
+    async function setWallpaper({ isLocal }) {
         isLoading.value = true
-        try {
-            const downloadResult = await window.electronAPI.useWallpaper(image.imgSrc, setting.wallpaperSavePath)
-            isLoading.value = false
-            MyElMessage({
-                message: downloadResult.message,
-                type: 'success',
-            })
-        }catch (error) {
-            isLoading.value = false
-            ElMessage({
-                message: error.message,
-                type: 'error',
-            })
+        let downloadResult
+        if (!isLocal) {
+            downloadResult = await window.electronAPI.downloadWallpaper(image.imgSrc, setting.wallpaperSavePath)
+            if (!downloadResult.success) {
+                console.log('downloadResult', downloadResult.success)
+                MyElMessage({
+                    message: downloadResult.message,
+                    type: 'error',
+                })
+                isLoading.value = false
+                return
+            }
         }
-        
+        const useResult = await window.electronAPI.useWallpaper(isLocal ? image.imgSrc : downloadResult.filePath)
+        isLoading.value = false
+        MyElMessage({
+            message: useResult.message,
+            type: useResult.success ? 'success' : 'error',
+        })
+
     }
-    return {isLoading, downloadWallpaper, setWallpaper }
+
+    async function delLocalWallpaper() {
+        isDel.value = true
+        const delResult = await window.electronAPI.delLocalWallpaper(image.imgSrc)
+        delResult.success && emit('delWallpaper', image.imgSrc)
+        MyElMessage({
+            message: delResult.message,
+            type: delResult.success ? 'success' : 'error',
+        })
+    }
+    return { isLoading, isDel, downloadWallpaper, setWallpaper, delLocalWallpaper }
 }

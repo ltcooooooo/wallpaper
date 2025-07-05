@@ -15,6 +15,7 @@ declare module 'vue' {
     ElSelect: typeof import('element-plus/es')['ElSelect']
     ElText: typeof import('element-plus/es')['ElText']
     IEpClose: typeof import('~icons/ep/close')['default']
+    IEpDelete: typeof import('~icons/ep/delete')['default']
     IEpDownload: typeof import('~icons/ep/download')['default']
     IEpFolderOpened: typeof import('~icons/ep/folder-opened')['default']
     IEpLoading: typeof import('~icons/ep/loading')['default']

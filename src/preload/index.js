@@ -13,11 +13,17 @@ const api = {
   setSavePath: async (path) => {
     return await ipcRenderer.invoke('set-save-path', path)
   },
+  getLocalWallpaper: async (path) => {
+    return await ipcRenderer.invoke('get-local-wallpaper', path)
+  },
   openWallpaperSaveFolder: async (path) => {
     return await shell.openPath(path)
   },
-  useWallpaper: async (url, wallpaperPath) => {
-    return await ipcRenderer.invoke('use-wallpaper', url, wallpaperPath)
+  useWallpaper: async ( wallpaperPath) => {
+    return await ipcRenderer.invoke('use-wallpaper', wallpaperPath)
+  },
+  delLocalWallpaper: async ( wallpaperPath) => {
+    return await ipcRenderer.invoke('del-local-wallpaper', wallpaperPath)
   },
   downloadWallpaper: async (url, wallpaperPath) => {
     return await ipcRenderer.invoke('download-wallpaper', url, wallpaperPath)

@@ -41,4 +41,4 @@ appImage:
 npmRebuild: false
 publish:
   provider: generic
-  url: http://tianci.run/auto-updates
+  url: http://tianci.run/auto-updates/

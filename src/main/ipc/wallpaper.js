@@ -1,14 +1,15 @@
 import { ipcMain } from "electron";
 import axios from 'axios'
 import wallpaper from 'wallpaper'
+import sharp from 'sharp'
 import fs from 'fs'
+import { extname, sep } from 'path'
+import { imageSizeFromFile } from 'image-size/fromFile'
 
 function registerWallpaperIpc() {
-    ipcMain.handle('use-wallpaper', async (event, url, path) => {
-        const downloadResult = await downloadWallpaper(url, path)
-        if (!downloadResult.success) return downloadResult
+    ipcMain.handle('use-wallpaper', async (event, imagePath) => {
         try {
-            const setWallpaperReslut = await wallpaper.set(downloadResult.filePath, { screen: 'all' })
+            const setWallpaperReslut = await wallpaper.set(imagePath, { screen: 'all' })
             return Promise.resolve({ success: true, message: '设置壁纸成功' })
         }
         catch (err) {
@@ -18,7 +19,28 @@ function registerWallpaperIpc() {
     ipcMain.handle('download-wallpaper', async (event, url, path) => {
         return await downloadWallpaper(url, path)
     })
-
+    ipcMain.handle('del-local-wallpaper', async (event, path) => {
+        try {
+            fs.rmSync(path)
+            return Promise.resolve({ success: true, message: "删除本地壁纸成功" })
+        }
+        catch (err) {
+            return Promise.resolve({ success: false, message: "删除本地壁纸失败" })
+        }
+    })
+    ipcMain.handle('get-local-wallpaper', async (event, path) => {
+        const validExtensions = ['.jpg', '.png', '.jpeg'];
+        const files = fs.readdirSync(path)
+        const imgArr = files.filter(file => validExtensions.includes(extname(file).toLowerCase()))
+        const imgPrmise = imgArr.map(async file => {
+            const filePath = `${path}${sep}${file}`
+            const imageSize = await imageSizeFromFile(filePath)
+            const imgBuffer = await imgToBuffer(filePath)
+            return { imgBuffer, imgSrc: filePath, size: `${imageSize.width}x${imageSize.height}` }
+        })
+        const images = await Promise.all(imgPrmise)
+        return Promise.resolve({ success: true, message: '获取本地壁纸成功', data: images })
+    })
     async function downloadWallpaper(url, path) {
         const urlSplit = url.split("/")
         const last = urlSplit[urlSplit.length - 1]
@@ -41,6 +63,18 @@ function registerWallpaperIpc() {
             console.log(err)
             return Promise.resolve({ success: false, message: "壁纸下载失败" })
         }
+    }
+    async function imgToBuffer(imgpath) {
+        // const readStream = fs.createReadStream(imgpath)
+        const optimizedBuffer = await sharp(imgpath)
+            .resize(400) // 限制宽度300px，高度自动等比缩放
+            .jpeg({
+                quality: 60, // 适当降低质量
+                progressive: true, // 启用渐进式JPEG
+                mozjpeg: true // 启用更高效的JPEG编码
+            })
+            .toBuffer()
+        return optimizedBuffer
     }
 }
 

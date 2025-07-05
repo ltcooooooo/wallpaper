@@ -1,7 +1,7 @@
 export default ({ type, message }) => {
     ElMessage({
         message,
-        type: 'success',
+        type,
         plain: true,
         offset: 46
     })
