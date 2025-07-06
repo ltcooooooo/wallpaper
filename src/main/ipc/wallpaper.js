@@ -9,7 +9,7 @@ import { imageSizeFromFile } from 'image-size/fromFile'
 function registerWallpaperIpc() {
     ipcMain.handle('use-wallpaper', async (event, imagePath) => {
         try {
-            const setWallpaperReslut = await wallpaper.set(imagePath, { screen: 'all' })
+            const setWallpaperReslut = await wallpaper.set(imagePath, { screen: 'main' })
             return Promise.resolve({ success: true, message: '设置壁纸成功' })
         }
         catch (err) {
@@ -28,18 +28,37 @@ function registerWallpaperIpc() {
             return Promise.resolve({ success: false, message: "删除本地壁纸失败" })
         }
     })
-    ipcMain.handle('get-local-wallpaper', async (event, path) => {
-        const validExtensions = ['.jpg', '.png', '.jpeg'];
-        const files = fs.readdirSync(path)
-        const imgArr = files.filter(file => validExtensions.includes(extname(file).toLowerCase()))
-        const imgPrmise = imgArr.map(async file => {
-            const filePath = `${path}${sep}${file}`
+    ipcMain.handle('get-local-wallpaper-List', (event, path) => {
+        try {
+            const validExtensions = ['.jpg', '.png', '.jpeg'];
+            const files = fs.readdirSync(path)
+            const imgArr = files.filter(file => validExtensions.includes(extname(file).toLowerCase()))
+            const images = imgArr.map(file => `${path}${sep}${file}`)
+            return Promise.resolve({ success: true, message: "获取本地壁纸成功", images })
+        }
+        catch (err) {
+            return Promise.resolve({ success: false, message: "获取本地壁纸失败" })
+        }
+        // const imgPrmise = imgArr.map(async file => {
+        //     
+        //     const imageSize = await imageSizeFromFile(filePath)
+        //     const imgBuffer = await imgToBuffer(filePath)
+        //     return { imgBuffer, imgSrc: filePath, size: `${imageSize.width}x${imageSize.height}` }
+        // })
+        // const images = await Promise.all(imgPrmise)
+        // return Promise.resolve({ success: true, message: '获取本地壁纸成功', data: images })
+    })
+    ipcMain.handle('get-local-wallpaper', async (event, filePath) => {
+        try {
             const imageSize = await imageSizeFromFile(filePath)
             const imgBuffer = await imgToBuffer(filePath)
-            return { imgBuffer, imgSrc: filePath, size: `${imageSize.width}x${imageSize.height}` }
-        })
-        const images = await Promise.all(imgPrmise)
-        return Promise.resolve({ success: true, message: '获取本地壁纸成功', data: images })
+            const { ctimeMs } = fs.statSync(filePath)
+            console.log(filePath,fs.statSync(filePath))
+            const data = { imgBuffer, ctimeMs, imgSrc: filePath, size: `${imageSize.width}x${imageSize.height}` }
+            return Promise.resolve({ success: true, data})
+        } catch (err) {
+            return Promise.resolve({ success: false, message: err.message })
+        }
     })
     async function downloadWallpaper(url, path) {
         const urlSplit = url.split("/")

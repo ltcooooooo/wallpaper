@@ -7,8 +7,8 @@
             <div class="text-white">
                 <el-button v-if="!isLocal" type="warning" size="small"><i-ep-star-filled /></el-button>
                 <el-button v-if="!isLocal" type="success" size="small" @click="downloadWallpaper" :loading="isLoading"><i-ep-download v-show="!isLoading" /></el-button>
-                <el-button type="primary" size="small" @click="setWallpaper({ isLocal })" :loading="isLoading"><i-ep-platform v-show="!isLoading" /></el-button>
                 <el-button v-if="isLocal" type="danger" size="small" @click="delLocalWallpaper" :loading="isLoading"><i-ep-delete v-show="!isLoading" /></el-button>
+                <el-button type="primary" size="small" @click="setWallpaper({ isLocal })" :loading="isLoading"><i-ep-platform v-show="!isLoading" /></el-button>
             </div>
         </section>
     </section>

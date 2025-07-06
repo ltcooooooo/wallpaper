@@ -13,6 +13,9 @@ const api = {
   setSavePath: async (path) => {
     return await ipcRenderer.invoke('set-save-path', path)
   },
+  getLocalWallpaperList: async (path) => {
+    return ipcRenderer.invoke('get-local-wallpaper-List', path)
+  },
   getLocalWallpaper: async (path) => {
     return await ipcRenderer.invoke('get-local-wallpaper', path)
   },
