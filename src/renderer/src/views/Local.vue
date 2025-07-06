@@ -24,7 +24,6 @@ const wallpaperList = ref([]);
 const readerList = ref(new Set());
 const updateList = ref(new Set());
 const addWallpaperSet = ref(new Set());
-const delWallpaperSet = ref(new Set());
 
 const init = createInit();
 onActivated(async () => {
@@ -32,21 +31,15 @@ onActivated(async () => {
   if (isInit) return;
   // 进入该页面时发现修改了保存路径
   if (setting.wallpaperSavePath !== savePath.value) {
-    console.log("修改了保存路径");
     savePath.value = setting.wallpaperSavePath;
     readerList.value.clear();
     wallpaperList.value = [];
     await createInit()();
     return;
   }
-  console.log("没有修改保存路径");
-  updateWallpaperList();
-});
-
-// 更新壁纸列表
-function updateWallpaperList() {
+  // 更新壁纸列表
   getLocalWallpaperList("update");
-}
+});
 
 // 第一次进入本地壁纸页面时获取所有壁纸
 async function getAllWallpaper() {
@@ -54,9 +47,8 @@ async function getAllWallpaper() {
   for (const imagePath of readerList.value) {
     const wallpaper = await getWallpaper(imagePath);
     wallpaperList.value.push(wallpaper);
+    wallpaperList.value.sort((a, b) => b.ctimeMs - a.ctimeMs);
   }
-  wallpaperList.value.sort((a, b) => b.ctimeMs - a.ctimeMs);
-  console.log("获取所有壁纸成功", wallpaperList.value);
 }
 // 获取到壁纸的信息，并将图片buffer转换为blob url
 async function getWallpaper(imagePath) {
@@ -95,8 +87,6 @@ async function getLocalWallpaperList(type) {
   if (type === "update") {
     for (const imagePath of readerList.value) {
       if (!updateList.value.has(imagePath)) {
-        console.log("删除", imagePath);
-        // delWallpaper(imagePath)
         delLocaWallpaper(imagePath, 0);
       }
     }
@@ -113,10 +103,7 @@ async function addWallpaper(imagePath) {
   const imageData = await getWallpaper(imagePath);
   wallpaperList.value.unshift(imageData);
 }
-// 手动删除了文件夹中的图片
-// function delWallpaper() {
-//   delWallpaperSet.value.add(imagePath);
-// }
+
 // 点击删除按钮删除壁纸
 function delLocaWallpaper(path, time = 400) {
   const index = wallpaperList.value.findIndex((item) => item.imgSrc === path);
