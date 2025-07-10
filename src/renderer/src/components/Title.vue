@@ -9,29 +9,34 @@
         </section>
         <section class="right no-drag flex gap-[20px]">
             <el-button-group class="relative">
-                <el-button color="#f0f4f9"><i-ep-star /></el-button>
-                <el-button @click="$router.push('/local')" color="#f0f4f9"><i-ep-folder-opened /></el-button>
-                <el-button @click="$router.push('/setting')" color="#f0f4f9"><i-ep-setting/></el-button>
+                <my-tooltip content="我的收藏" placement="bottom">
+                    <el-button @click="$router.push('/favorites')" color="#f0f4f9"><i-ep-star /></el-button>
+                </my-tooltip>
+                <my-tooltip content="我的壁纸" placement="bottom">
+                    <el-button @click="$router.push('/local')" color="#f0f4f9"><i-ep-folder-opened /></el-button>
+                </my-tooltip>
+                <my-tooltip content="设置" placement="bottom">
+                    <el-button @click="$router.push('/setting')" color="#f0f4f9"><i-ep-setting/></el-button>
+                </my-tooltip>
                 <div class="line absolute w-[0.5px] h-[50%] bg-[rgba(0,0,0,0.1)] right-[-10px] top-1/2 translate-[-50%]">
                 </div>
             </el-button-group>
             <el-button-group>
-                <el-button @click="minimizeApp" color="#f0f4f9"><i-ep-minus /></el-button>
-                <el-button @click="quitApp" color="#f0f4f9"><i-ep-close /></el-button>
+                <my-tooltip content="最小化" placement="bottom">
+                    <el-button @click="minimizeApp" color="#f0f4f9"><i-ep-minus /></el-button>
+                </my-tooltip>
+                <my-tooltip content="关闭" placement="bottom">
+                    <el-button @click="quitApp" color="#f0f4f9"><i-ep-close /></el-button>
+                </my-tooltip>
             </el-button-group>
         </section>
     </header>
 </template>
 
 <script setup>
-import useSettingStore from '../store/setting'
-
-const { setting } = useSettingStore()
-
 //最小化App
 const minimizeApp = () => window.electronAPI.minimize()
 //关闭App
 const quitApp = () => window.electronAPI.quit()
 
-console.log(setting)
 </script>

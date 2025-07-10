@@ -14,6 +14,10 @@ const routes = [
   {
     path: '/local', component: () => import('../views/Local.vue'),
     name: 'local',
+  },
+  {
+    path: '/favorites', component: () => import('../views/Favorites.vue'),
+    name: 'favorites',
   }
 ]
 

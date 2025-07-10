@@ -1,11 +1,14 @@
 import MyElMessage from '../common/MyElMessage'
-import { ref } from 'vue'
+import { ref, computed, toRaw } from 'vue'
 import useSettingStore from '@renderer/store/setting'
+import useFavoritesStore from '@renderer/store/favorites'
 
 export default (image, emit) => {
+    const { favoritesList, addFavoritesImage, delFavoritesImage } = useFavoritesStore()
+    const { setting } = useSettingStore()
     const isLoading = ref(false)
     const isDel = ref(false)
-    const { setting } = useSettingStore()
+    const isFavorite = computed(() => !!favoritesList.find(i => i.imgSrc === image.imgSrc))
     async function downloadWallpaper() {
         console.log('downloadWallpaper', setting.wallpaperSavePath)
         isLoading.value = true
@@ -17,10 +20,10 @@ export default (image, emit) => {
         })
 
     }
-    async function setWallpaper({ isLocal }) {
+    async function setWallpaper({ isLocalPage }) {
         isLoading.value = true
         let downloadResult
-        if (!isLocal) {
+        if (!isLocalPage) {
             downloadResult = await window.electronAPI.downloadWallpaper(image.imgSrc, setting.wallpaperSavePath)
             if (!downloadResult.success) {
                 console.log('downloadResult', downloadResult.success)
@@ -32,7 +35,7 @@ export default (image, emit) => {
                 return
             }
         }
-        const useResult = await window.electronAPI.useWallpaper(isLocal ? image.imgSrc : downloadResult.filePath)
+        const useResult = await window.electronAPI.useWallpaper(isLocalPage ? image.imgSrc : downloadResult.filePath)
         isLoading.value = false
         MyElMessage({
             message: useResult.message,
@@ -50,5 +53,17 @@ export default (image, emit) => {
             type: delResult.success ? 'success' : 'error',
         })
     }
-    return { isLoading, isDel, downloadWallpaper, setWallpaper, delLocalWallpaper }
+
+    function addFavorites(image) {
+        addFavoritesImage(image)
+    }
+    function delFavorites(image, isFavoritePage) {
+        if (isFavoritePage) {
+            isDel.value = true
+            setTimeout(() => delFavoritesImage(image), 400);
+        } else {
+            delFavoritesImage(image)
+        }
+    }
+    return { isLoading, isFavorite, isDel, downloadWallpaper, setWallpaper, delLocalWallpaper, addFavorites, delFavorites }
 }

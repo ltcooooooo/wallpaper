@@ -7,7 +7,7 @@
           v-for="item in wallpaperList"
           :key="item.imgSrc"
         >
-          <Card :image="item" :isLocal="true" @delWallpaper="delLocaWallpaper" />
+          <Card :image="item" page="local" @delWallpaper="delLocaWallpaper" />
         </div>
       </div>
     </el-scrollbar>

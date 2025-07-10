@@ -2,7 +2,6 @@ import { defineStore } from 'pinia'
 import { reactive } from 'vue'
 const useSettingStore = defineStore('setting', () => {
     const setting = reactive({})
-    initSetting()
 
     function setSetting(settingsVal) {
         for (const key in settingsVal) {
@@ -19,7 +18,8 @@ const useSettingStore = defineStore('setting', () => {
     }
     return {
         setting,
-        setSetting
+        setSetting,
+        initSetting
     }
 })
 export default useSettingStore 

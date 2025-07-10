@@ -10,6 +10,12 @@ const api = {
   setSettingConfig: async (value) => {
     return await ipcRenderer.send('set-setting-config', value)
   },
+  getFavoritesList: async () => {
+    return await ipcRenderer.invoke('get-favorites-list')
+  },
+  setFavoritesList: async (value) => {
+    return await ipcRenderer.send('set-favorites-list', value)
+  },
   setSavePath: async (path) => {
     return await ipcRenderer.invoke('set-save-path', path)
   },
