@@ -34,7 +34,7 @@ const isFavoritePage = page === 'favorites'
 
 const { isLoading, isFavorite, isDel, downloadWallpaper, setWallpaper, delLocalWallpaper, addFavorites, delFavorites } = useCard(image, emit)
 const buttonShow = computed(()=>({
-    favorite: !isFavorite.value,
+    favorite: !isFavorite.value && !isLocalPage,
     unFavorite: isFavorite.value,
     download: !isLocalPage,
     local: isLocalPage
