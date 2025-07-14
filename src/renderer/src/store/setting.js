@@ -1,21 +1,30 @@
 import { defineStore } from 'pinia'
-import { reactive } from 'vue'
+import { reactive, toRaw , watch} from 'vue'
+// import initCursor from '@renderer/utils/cursorEffects/initSursor.js'
+import initCursor from '@renderer/utils/cursorEffects/initSursor'
+
+// src/renderer/src/utils/cursorEffects/initSursor.js
+
 const useSettingStore = defineStore('setting', () => {
     const setting = reactive({})
-
+    
     function setSetting(settingsVal) {
         for (const key in settingsVal) {
             setting[key] = settingsVal[key]
         }
-        window.electronAPI.setSettingConfig({...setting})
     }
-
+    
     async function initSetting() {
         const settingConfig = await window.electronAPI.getSettingConfig()
-        for (const key in settingConfig) {
-            setting[key] = settingConfig[key]
-        }
+        console.log('settingConfig', settingConfig)
+        initCursor(settingConfig)
+        setSetting(settingConfig)
     }
+    watch(setting,(newVal,oldVal)=>{
+        // console.log('setting change',newVal,oldVal)
+        const raw = toRaw(setting)
+        window.electronAPI.setSettingConfig(raw)
+    })
     return {
         setting,
         setSetting,

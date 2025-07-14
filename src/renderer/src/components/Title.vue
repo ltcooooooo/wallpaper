@@ -9,8 +9,11 @@
         </section>
         <section class="right no-drag flex gap-[20px]">
             <el-button-group class="relative">
+                <my-tooltip content="光标效果" placement="bottom">
+                    <el-button @click="$router.push('/cursor')" color="#f0f4f9"><i-solar-cursor-linear /></el-button>
+                </my-tooltip>
                 <my-tooltip content="我的收藏" placement="bottom">
-                    <el-button @click="$router.push('/favorites')" color="#f0f4f9"><i-ep-star /></el-button>
+                    <el-button @click="$router.push('/favorites')" color="#f0f4f9"><i-ms-kid-star-outline /></el-button>
                 </my-tooltip>
                 <my-tooltip content="我的壁纸" placement="bottom">
                     <el-button @click="$router.push('/local')" color="#f0f4f9"><i-ep-folder-opened /></el-button>

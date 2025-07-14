@@ -14,3 +14,12 @@
 import { useRoute } from 'vue-router';
 const route = useRoute();
 </script>
+
+<style>
+.l-color-picker .el-color-dropdown__btns .el-color-dropdown__link-btn{
+  display: none;
+}
+.emoji-picker.el-popover.el-popper {
+  padding: 0;
+}
+</style>

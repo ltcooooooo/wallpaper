@@ -6,19 +6,19 @@
             <div class="text-white">{{ image.size }}</div>
             <div class="text-white">
                 <my-tooltip v-if="buttonShow.favorite" content="收藏">
-                    <el-button type="warning" size="small" @click="addFavorites(image)"><i-ep-star /></el-button>
+                    <el-button type="warning" size="small" @click="addFavorites(image)"><i-ms-kid-star-outline /></el-button>
                 </my-tooltip>
                 <my-tooltip v-if="buttonShow.unFavorite" content="取消收藏">
-                    <el-button type="warning" size="small" @click="delFavorites(image, isFavoritePage)"><i-ep-star-filled /></el-button>
+                    <el-button type="warning" size="small" @click="delFavorites(image, isFavoritePage)"><i-ms-kid-star /></el-button>
                 </my-tooltip>
                 <my-tooltip v-if="buttonShow.download" content="下载">
-                    <el-button type="success" size="small" @click="downloadWallpaper" :loading="isLoading"><i-ep-download v-show="!isLoading" /></el-button>
+                    <el-button type="success" size="small" @click="downloadWallpaper" :loading="isLoading"><i-ms-download-rounded v-show="!isLoading" /></el-button>
                 </my-tooltip>
                 <my-tooltip v-if="buttonShow.local" content="删除">
-                    <el-button type="danger" size="small" @click="delLocalWallpaper"><i-ep-delete /></el-button>
+                    <el-button type="danger" size="small" @click="delLocalWallpaper"><i-ms-delete-outline-rounded /></el-button>
                 </my-tooltip>
                 <my-tooltip content="设为壁纸">
-                    <el-button type="primary" size="small" @click="setWallpaper({ isLocalPage })" :loading="isLoading"><i-ep-platform v-show="!isLoading" /></el-button>
+                    <el-button type="primary" size="small" @click="setWallpaper({ isLocalPage })" :loading="isLoading"><i-ms-desktop-mac v-show="!isLoading" /></el-button>
                 </my-tooltip>
             </div>
         </section>
@@ -34,7 +34,7 @@ const isFavoritePage = page === 'favorites'
 
 const { isLoading, isFavorite, isDel, downloadWallpaper, setWallpaper, delLocalWallpaper, addFavorites, delFavorites } = useCard(image, emit)
 const buttonShow = computed(()=>({
-    favorite: !isFavorite.value,
+    favorite: !isFavorite.value && !isLocalPage,
     unFavorite: isFavorite.value,
     download: !isLocalPage,
     local: isLocalPage

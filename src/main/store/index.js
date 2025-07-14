@@ -7,6 +7,7 @@ const defaultSettings = {
 }
 const configStore = new Store({ name: 'config' })
 configStore.has('settings') || configStore.set('settings', defaultSettings)
+
 const dbStore = new Store({ name: 'db' })
 dbStore.has('favorites') || dbStore.set('favorites',[])
 

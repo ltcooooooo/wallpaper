@@ -18,6 +18,10 @@ const routes = [
   {
     path: '/favorites', component: () => import('../views/Favorites.vue'),
     name: 'favorites',
+  },
+  {
+    path: '/cursor', component: () => import('../views/cursor.vue'),
+    name: 'cursor',
   }
 ]
 

@@ -26,20 +26,25 @@ export default defineConfig({
         resolvers: [
           ElementPlusResolver(),
           IconsResolver({
-            prefix: 'Icon',
+            alias: {
+              'ms': 'material-symbols'
+            },
           })
         ],
       }),
       Components({
         resolvers: [
           IconsResolver({
-            enabledCollections: ['ep'],
+            enabledCollections: ['ep', 'material-symbols', 'solar'],
+            alias: {
+              'ms': 'material-symbols' // 设置别名
+            }
           }),
           ElementPlusResolver()
         ],
       }),
       Icons({
-        autoInstall: true,
+        autoInstall: true
       }),
     ]
   }

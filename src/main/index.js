@@ -7,7 +7,7 @@ import icon from '../../resources/icon.png?asset'
 import globalMountElog from './core/logger'
 import registerUpdateService from './core/update'
 import registerIpc from './ipc/index'
-
+console.log('appData', app.getPath('appData'))
 function createWindow() {
   const mainWindow = new BrowserWindow({
     width: 970,
