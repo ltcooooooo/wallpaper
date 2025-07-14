@@ -39,7 +39,6 @@ export default ({ wallpaperListScrollRef, wallpaperListRef, params }) => {
             const isNoLoad = loading.value || noMore.value || reloading.value
             if (isNoLoad) return
             loading.value = true
-            console.log('loading',loading)
             wallpaperList.page += 1
             getWallpaperList(params)
         }

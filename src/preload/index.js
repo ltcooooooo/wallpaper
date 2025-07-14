@@ -1,7 +1,5 @@
-import { contextBridge, ipcRenderer, shell, app } from 'electron'
+import { contextBridge, ipcRenderer, shell } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import { resolve } from 'path'
-import { homedir } from 'os'
 // Custom APIs for renderer
 const api = {
   getSettingConfig: async () => {

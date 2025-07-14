@@ -106,6 +106,7 @@ async function addWallpaper(imagePath) {
 
 // 点击删除按钮删除壁纸
 function delLocaWallpaper(path, time = 400) {
+  console.log('删除后更新列表')
   const index = wallpaperList.value.findIndex((item) => item.imgSrc === path);
   setTimeout(() => wallpaperList.value.splice(index, 1), time);
 }
