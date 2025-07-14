@@ -21,7 +21,7 @@ function registerWallpaperIpc() {
     })
     ipcMain.handle('del-local-wallpaper', async (event, path) => {
         try {
-            fs.rmSync(path)
+            const rmResult = fs.rmSync(path)
             return Promise.resolve({ success: true, message: "删除本地壁纸成功" })
         }
         catch (err) {

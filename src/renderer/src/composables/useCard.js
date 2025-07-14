@@ -45,9 +45,12 @@ export default (image, emit) => {
     }
 
     async function delLocalWallpaper() {
-        isDel.value = true
+        console.log('image.imgSrc', image.imgSrc)
         const delResult = await window.electronAPI.delLocalWallpaper(image.imgSrc)
-        delResult.success && emit('delWallpaper', image.imgSrc)
+        if(delResult.success) {
+            isDel.value = true
+            emit('delWallpaper', image.imgSrc)
+        }
         MyElMessage({
             message: delResult.message,
             type: delResult.success ? 'success' : 'error',
