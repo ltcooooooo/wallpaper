@@ -1,4 +1,4 @@
-import { BrowserWindow, screen, app } from "electron";
+import { BrowserWindow, screen } from "electron";
 import { is } from '@electron-toolkit/utils'
 import { join } from 'path'
 import { set } from "wallpaper";
@@ -15,7 +15,11 @@ function destroyCursorWindow() {
 function createWindow() {
     const cursorWindow = new BrowserWindow({
         transparent: true,
-        show: true,
+        show: false,
+        frame: false,
+        roundedCorners: false,
+        focusable: false,
+        skipTaskbar: true,
         x: 0,
         y: 0,
         width: 500,
@@ -24,7 +28,7 @@ function createWindow() {
             preload: join(__dirname, '../preload/index.js'),
             sandbox: false,
             spellcheck: false,
-            webSecurity: import.meta.env.PROD == true,
+            webSecurity: import.meta.env.PROD == true
         }
     })
     cursorWindow.openDevTools()
