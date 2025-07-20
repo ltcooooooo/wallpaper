@@ -4,6 +4,8 @@ import { join } from 'path'
 
 import icon from '../../resources/icon.png?asset'
 
+import { createCursorWindow, destroyCursorWindow } from './common/window'
+
 import globalMountElog from './core/logger'
 import registerUpdateService from './core/update'
 import registerIpc from './ipc/index'
@@ -39,7 +41,6 @@ function createWindow() {
     shell.openExternal(details.url)
     return { action: 'deny' }
   })
-
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {

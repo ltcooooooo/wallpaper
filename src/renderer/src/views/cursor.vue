@@ -2,80 +2,76 @@
     <div id="cursor" class="p-4 h-full flex flex-col text-nowrap">
         <section class="flex items-center gap-5">
             <div>开启鼠标光标效果:</div>
-            <el-switch v-model="sursor.open"></el-switch>
+            <el-switch v-model="cursor.open" @change="openCursor"></el-switch>
         </section>
         <el-divider />
         <el-radio-group
-          v-model="sursor.current"
+          v-model="cursor.current"
           text-color="#626aef"
           fill="rgb(239, 240, 253)"
         >
-            <el-radio-button  v-for="item in sursor.cursorType" :key="item.name"  :label="item.label" :value="item.name" />
+            <el-radio-button  v-for="item in cursor.cursorType" :key="item.name"  :label="item.label" :value="item.name" />
         </el-radio-group>
         <div class="h-5"></div>
-        <section class="Rainbow" v-show="sursor.current === 'Rainbow'">
+        <section class="Rainbow" v-show="cursor.current === 'Rainbow'">
             <div class="flex gap-8">
-                <div class="flex items-center gap-8 w-50">
-                    <div>长度:</div>
+                <div class="flex items-center gap-5 w-50">
+                    <div>长度: </div>
                     <div class="flex-1">
                         <el-slider 
-                            v-model="sursor.cursorType.Rainbow.options.length" 
-                            :min="sursor.cursorType.Rainbow.options.minLength" 
-                            :max="sursor.cursorType.Rainbow.options.maxLength" />
+                            v-model="cursor.cursorType.Rainbow.options.length" 
+                            :min="staticOptions.Rainbow.minLength" 
+                            :max="staticOptions.Rainbow.maxLength" />
                     </div>
                 </div>
-                <div class="flex items-center gap-8 w-50">
+                <div class="flex items-center gap-5 w-50">
                     <div>大小:</div>
                     <div class="flex-1">
                         <el-slider 
-                            v-model="sursor.cursorType.Rainbow.options.size" 
-                            :min="sursor.cursorType.Rainbow.options.minSize" 
-                            :max="sursor.cursorType.Rainbow.options.maxSize" />
+                            v-model="cursor.cursorType.Rainbow.options.size" 
+                            :min="staticOptions.Rainbow.minSize" 
+                            :max="staticOptions.Rainbow.maxSize" />
                     </div>
                 </div>
             </div>
-            <div class="flex items-center gap-5 mt-5">
+            <div class="flex items-center gap-3 mt-5">
                 <div>颜色:</div>
-                <div class="flex-1">
-                <template v-for="(c,i) in sursor.cursorType.Rainbow.options.color" :key="i" >
-                    <el-color-picker popper-class="l-color-picker" v-model="c.value" />
-                </template>
-                </div>
+                <options-group componentName="colors" cursorTypeName="Rainbow" :isEditable="false"></options-group>
             </div>
         </section>
-        <section class="Clock" v-show="sursor.current === 'Clock'">
+        <section class="Clock" v-show="cursor.current === 'Clock'">
             <div class="flex gap-10 gap-y-5 flex-wrap">
                 <div class="flex items-center gap-5 w-full">
                     <div>是否显示日期:</div>
-                    <el-switch v-model="sursor.cursorType.Clock.options.showDate"></el-switch>
+                    <el-switch v-model="cursor.cursorType.Clock.options.showDate"></el-switch>
                 </div>
                 <div class="flex items-center gap-5">
                     <div>日期颜色:</div>
-                    <el-color-picker popper-class="l-color-picker" v-model="sursor.cursorType.Clock.options.dateColor" />
+                    <el-color-picker popper-class="l-color-picker" v-model="cursor.cursorType.Clock.options.dateColor" />
                 </div>
                 <div class="flex items-center gap-5">
                     <div>小时颜色:</div>
-                    <el-color-picker popper-class="l-color-picker" v-model="sursor.cursorType.Clock.options.faceColor" />
-                </div>
-                <div class="flex items-center gap-5">
-                    <div>分针颜色:</div>
-                    <el-color-picker popper-class="l-color-picker" v-model="sursor.cursorType.Clock.options.minutesColor" />
-                </div>
-                <div class="flex items-center gap-5">
-                    <div>秒针颜色:</div>
-                    <el-color-picker popper-class="l-color-picker" v-model="sursor.cursorType.Clock.options.secondsColor" />
+                    <el-color-picker popper-class="l-color-picker" v-model="cursor.cursorType.Clock.options.faceColor" />
                 </div>
                 <div class="flex items-center gap-5">
                     <div>时针颜色:</div>
-                    <el-color-picker popper-class="l-color-picker" v-model="sursor.cursorType.Clock.options.hoursColor" />
+                    <el-color-picker popper-class="l-color-picker" v-model="cursor.cursorType.Clock.options.hoursColor" />
+                </div>
+                <div class="flex items-center gap-5">
+                    <div>分针颜色:</div>
+                    <el-color-picker popper-class="l-color-picker" v-model="cursor.cursorType.Clock.options.minutesColor" />
+                </div>
+                <div class="flex items-center gap-5">
+                    <div>秒针颜色:</div>
+                    <el-color-picker popper-class="l-color-picker" v-model="cursor.cursorType.Clock.options.secondsColor" />
                 </div>
             </div>
         </section>
-        <section class="textFlag" v-show="sursor.current === 'textFlag'">
+        <section class="textFlag" v-show="cursor.current === 'textFlag'">
             <div class="flex gap-10 gap-y-5 flex-wrap">
                 <div class="flex items-center gap-5">
                     <div>文本:</div>
-                    <el-input v-model="sursor.cursorType.textFlag.options.text" placeholder="请设置要显示的文字" />
+                    <el-input v-model="cursor.cursorType.textFlag.options.text" placeholder="请设置要显示的文字" />
                 </div>
                 <div class="flex items-center gap-5">
                     <div class="flex items-center gap-2">
@@ -84,33 +80,67 @@
                             <i-ms-tips-and-updates-outline-rounded class="cursor-pointer"/>
                         </my-tooltip>
                     </div>
-                    <el-input v-model="sursor.cursorType.textFlag.options.font" placeholder="monospace" />
+                    <el-input v-model="cursor.cursorType.textFlag.options.font" placeholder="monospace" />
                 </div>
                 <div class="flex items-center gap-8 w-50">
                     <div>字号:</div>
                     <div class="flex-1">
                         <el-slider 
-                            v-model="sursor.cursorType.textFlag.options.textSize" 
-                            :min="sursor.cursorType.textFlag.options.minSize" 
-                            :max="sursor.cursorType.textFlag.options.maxSize" />
+                            v-model="cursor.cursorType.textFlag.options.textSize" 
+                            :min="staticOptions.textFlag.minSize" 
+                            :max="staticOptions.textFlag.maxSize" />
                     </div>
                 </div>
                 <div class="flex items-center gap-8 w-50">
                     <div>间距:</div>
                     <div class="flex-1">
                         <el-slider 
-                            v-model="sursor.cursorType.textFlag.options.gap" 
-                            :min="sursor.cursorType.textFlag.options.minSize" 
-                            :max="sursor.cursorType.textFlag.options.maxSize" />
+                            v-model="cursor.cursorType.textFlag.options.gap" 
+                            :min="staticOptions.textFlag.minSize" 
+                            :max="staticOptions.textFlag.maxSize" />
                     </div>
                 </div>
             </div>
         </section>
-        <section class="emoji" v-show="sursor.current === 'emoji'">
+        <section class="emoji" v-show="cursor.current === 'emoji'">
             <div class="flex gap-10 gap-y-5 flex-wrap">
                 <div class="flex items-center gap-3">
-                    <div>添加emoji:</div>
-                    <emoji-picker v-for="(emoji, index) in sursor.cursorType.emoji.options.emoji" :emoji="emoji" @selectEmoji="selectEmoji($event,index)" />
+                    <div>Emoji:</div>
+                    <options-group componentName="emoji" cursorTypeName="emoji" :max="10" :min="1"></options-group>
+                </div>
+            </div>
+        </section>
+        <section class="springyEmoji" v-show="cursor.current === 'springyEmoji'">
+            <div class="flex gap-10 gap-y-5 flex-wrap">
+                <div class="flex items-center gap-3">
+                    <div>Emoji:</div>
+                    <emoji-picker :emoji="cursor.cursorType.springyEmoji.options.emoji" @selectEmoji="selectSpringyEmoji"
+      />
+                </div>
+            </div>
+        </section>
+        <section class="bubble" v-show="cursor.current === 'bubble'">
+            <div class="flex gap-10 gap-y-5 flex-wrap">
+                <div class="flex items-center gap-3">
+                    <div>填充色: </div>
+                    <el-color-picker popper-class="l-color-picker" v-model="cursor.cursorType.bubble.options.fillColor" />
+                </div>
+                <div class="flex items-center gap-3">
+                    <div>描边色: </div>
+                    <el-color-picker popper-class="l-color-picker" v-model="cursor.cursorType.bubble.options.strokeColor" />
+                </div>
+            </div>
+        </section>
+        <section class="character" v-show="cursor.current === 'character'">
+            <div class="flex gap-10 gap-y-5 flex-wrap">
+                <div class="flex items-center gap-3 w-full">
+                    <div>字符: </div>
+                    <el-input style="width: 200px" v-model="cursor.cursorType.character.options.text" maxlength="10" placeholder="hello" type="text"
+  />
+                </div>
+                <div class="flex items-center gap-3">
+                    <div>随机色: </div>
+                    <options-group componentName="colors" cursorTypeName="character" :max="10" :min="1"></options-group>
                 </div>
             </div>
         </section>
@@ -124,19 +154,41 @@
 import useSettingStore from '@renderer/store/setting'
 import { ref, watch, watchEffect } from 'vue'
 const { setting } = useSettingStore()
-const sursor = setting.sursor
+const cursor = setting.cursor
 const curOptions = ref({})
-
-function selectEmoji(emoji, index) {
-    sursor.cursorType.emoji.options.emoji[index] = emoji.native
+const staticOptions = {
+    Rainbow: {
+        minLength: 20,
+        maxLength: 100,
+        minSize: 1,
+        maxSize: 5,
+    },
+    textFlag: {
+        minSize: 12,
+        maxSize: 50,
+        minGap: 12,
+        maxGap: 50,
+    }
 }
-watch(() => sursor.open, (isOpen) => {
-    console.log('open', isOpen)
-})
+
+function openCursor(isOpen) {
+    if(isOpen) {
+        window.electronAPI.openCursor()
+    } else {
+        window.electronAPI.closeCursor()
+    }
+}
 
 watchEffect(() => {
-    const options = sursor.cursorType[sursor.current].options
+    const options = cursor.cursorType[cursor.current].options
     curOptions.value = options
-    options.color && (options.colors = options.color.map(item => item.value))
+    cursor.cursorType.character.options.characters = cursor.cursorType.character.options.text.split('')
+    if(cursor.cursorType.character.options.characters.length === 0) {
+        cursor.cursorType.character.options.characters = ['h', 'e', 'l', 'l', 'o']
+    }
 })
+
+function selectSpringyEmoji(emoji) {
+    cursor.cursorType.springyEmoji.options.emoji = emoji.native
+}
 </script>

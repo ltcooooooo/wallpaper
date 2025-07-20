@@ -1,0 +1,17 @@
+html,body,#app {
+    width: 100vw ;
+    height: 100vh ;
+    background-color: transparent;
+}
+
+#app {
+    border: none;
+}
+
+#wallpaper > main {
+    height: 100vh;
+}
+
+canvas {
+    image-rendering: pixelated;
+}

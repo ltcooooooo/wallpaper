@@ -22,6 +22,10 @@ const routes = [
   {
     path: '/cursor', component: () => import('../views/cursor.vue'),
     name: 'cursor',
+  },
+  {
+    path: '/cursorWindow', component: () => import('../views/cursorWindow.vue'),
+    name: 'cursorWindow',
   }
 ]
 

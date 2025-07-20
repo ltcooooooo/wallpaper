@@ -2,6 +2,7 @@ import registerSystemIpc from './system'
 import registerWallpaperIpc from './wallpaper'
 import registerSettingIpc from './setting'
 import registerStoreIpc from './store'
+import registerCursorIpc from './cursor'
 
 function registerIpc(){
     //系统相关的事件
@@ -10,8 +11,10 @@ function registerIpc(){
     registerWallpaperIpc()
     //系统相关的事件
     registerSettingIpc()
-    //注册store相关事件
+    //store相关事件
     registerStoreIpc()
+    //cursor相关事件
+    registerCursorIpc()
 }
 
 export default registerIpc
