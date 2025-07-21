@@ -35,8 +35,8 @@ const api = {
   downloadWallpaper: async (url, wallpaperPath) => {
     return await ipcRenderer.invoke('download-wallpaper', url, wallpaperPath)
   },
-  openCursor: () => {
-    ipcRenderer.send("open-cursor")
+  openCursor: (allDisplays) => {
+    ipcRenderer.send("open-cursor", allDisplays)
   },
   closeCursor: () => {
     ipcRenderer.send("close-cursor")

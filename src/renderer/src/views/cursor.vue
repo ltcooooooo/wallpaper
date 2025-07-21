@@ -173,7 +173,9 @@ const staticOptions = {
 
 function openCursor(isOpen) {
     if(isOpen) {
-        window.electronAPI.openCursor()
+        const allDisplays = ['fairyDust', 'emoji', 'bubble', 'snowflake', 'character'].includes(cursor.current)
+        console.log('allDisplays', allDisplays)
+        window.electronAPI.openCursor(allDisplays)
     } else {
         window.electronAPI.closeCursor()
     }

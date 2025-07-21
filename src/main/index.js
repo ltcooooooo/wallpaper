@@ -4,7 +4,7 @@ import { join } from 'path'
 
 import icon from '../../resources/icon.png?asset'
 
-import { createCursorWindow, destroyCursorWindow } from './common/window'
+import openCursor from './common/openCursor'
 
 import globalMountElog from './core/logger'
 import registerUpdateService from './core/update'
@@ -34,6 +34,7 @@ function createWindow() {
   import.meta.env.PROD == false && mainWindow.openDevTools()
 
   mainWindow.on('ready-to-show', () => {
+    openCursor()
     mainWindow.show()
   })
 
