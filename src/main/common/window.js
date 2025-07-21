@@ -33,6 +33,7 @@ function createWindow(bounds) {
         roundedCorners: false,
         focusable: false,
         skipTaskbar: true,
+        hiddenInMissionControl: true,
         x: 0,
         y: 0,
         width: 500,
