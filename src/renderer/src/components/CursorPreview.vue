@@ -1,7 +1,12 @@
 <template>
     <div class="h-full flex flex-col" id="cursorPreview">
         <div class="mt-7 mb-3">
-            <div>在下方预览光标效果</div>
+            <div class="flex items-center gap-2">
+                在下方预览光标效果:
+                <my-tooltip content="光标效果关闭状态下可预览">
+                    <i-ms-tips-and-updates-outline-rounded class="cursor-pointer"/>
+                </my-tooltip>
+            </div>
         </div>
         <div class="flex-1 border-gray-300 border-2 bg-white relative rounded-sm" ref="curPreview"></div>
     </div>

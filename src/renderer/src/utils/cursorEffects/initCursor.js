@@ -1,5 +1,5 @@
 const initData = {
-    open: true,
+    open: false,
     current: 'Rainbow',
     cursorType:{
         Rainbow: {
@@ -56,7 +56,7 @@ const initData = {
             label: '弹性表情',
             options: {
                 cursorName: 'springyEmojiCursor',
-                emoji: '🐱',
+                emoji: '🏀',
             }
         },
         bubble: {

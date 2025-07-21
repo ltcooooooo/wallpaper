@@ -1,7 +1,12 @@
 <template>
     <div id="cursor" class="p-4 h-full flex flex-col text-nowrap">
         <section class="flex items-center gap-5">
-            <div>开启鼠标光标效果:</div>
+            <div class="flex items-center gap-2">
+                开启鼠标光标效果:
+                <my-tooltip content="切换或修改光标效果后需要重新开启生效，部分效果不支持多屏幕" placement="bottom">
+                    <i-ms-tips-and-updates-outline-rounded class="cursor-pointer"/>
+                </my-tooltip>
+            </div>
             <el-switch v-model="cursor.open" @change="openCursor"></el-switch>
         </section>
         <el-divider />
