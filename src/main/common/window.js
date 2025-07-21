@@ -1,7 +1,9 @@
-import { BrowserWindow, screen } from "electron";
+import { BrowserWindow, screen, shell } from "electron";
 import { is } from '@electron-toolkit/utils'
 import { join } from 'path'
 import { set } from "wallpaper";
+
+import openCursor from './openCursor'
 
 let cursorWindow = [];
 function createCursorWindow(allDisplays) {
@@ -33,6 +35,7 @@ function createWindow(bounds) {
         roundedCorners: false,
         focusable: false,
         skipTaskbar: true,
+        hasShadow: false,
         hiddenInMissionControl: true,
         x: 0,
         y: 0,
@@ -54,8 +57,6 @@ function createWindow(bounds) {
         cursorWindow.show()
     })
     // cursorWindow.openDevTools()
-    // 解决macos下光标残留阴影
-    cursorWindow.setHasShadow(false);
     cursorWindow.setBounds(bounds)
     // 忽略鼠标事件，传递给渲染进程
     cursorWindow.setIgnoreMouseEvents(true, { forward: true })
@@ -66,4 +67,43 @@ function createWindow(bounds) {
     return cursorWindow
 }
 
-export { createCursorWindow, destroyCursorWindow }
+function createMainWindow() {
+  const mainWindow = new BrowserWindow({
+    width: 970,
+    height: 716,
+    minHeight: 500,
+    minWidth: 650,
+    maxWidth: 1280,
+    show: false,
+    autoHideMenuBar: true,
+    frame: false,
+    transparent: true,
+    minimizable: false,
+    maximizable: false,
+    ...(process.platform === 'linux' ? { icon } : {}),
+    webPreferences: {
+      preload: join(__dirname, '../preload/index.js'),
+      sandbox: false,
+      spellcheck:false,
+      webSecurity: import.meta.env.PROD == true
+    }
+  })
+  import.meta.env.PROD == false && mainWindow.openDevTools()
+
+  mainWindow.on('ready-to-show', () => {
+    openCursor()
+    mainWindow.show()
+  })
+
+  mainWindow.webContents.setWindowOpenHandler((details) => {
+    shell.openExternal(details.url)
+    return { action: 'deny' }
+  })
+  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+  } else {
+    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+  }
+}
+
+export { createCursorWindow, destroyCursorWindow, createMainWindow }

@@ -1,53 +1,17 @@
-import { app, shell, BrowserWindow } from 'electron'
+import { app, BrowserWindow, Menu } from 'electron'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import { join } from 'path'
 
 import icon from '../../resources/icon.png?asset'
 
-import openCursor from './common/openCursor'
+import { createMainWindow } from './common/window'
 
 import globalMountElog from './core/logger'
 import registerUpdateService from './core/update'
 import registerIpc from './ipc/index'
 console.log('appData', app.getPath('appData'))
-function createWindow() {
-  const mainWindow = new BrowserWindow({
-    width: 970,
-    height: 716,
-    minHeight: 500,
-    minWidth: 650,
-    maxWidth: 1280,
-    show: false,
-    autoHideMenuBar: true,
-    frame: false,
-    transparent: true,
-    minimizable: false,
-    maximizable: false,
-    ...(process.platform === 'linux' ? { icon } : {}),
-    webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
-      sandbox: false,
-      spellcheck:false,
-      webSecurity: import.meta.env.PROD == true
-    }
-  })
-  import.meta.env.PROD == false && mainWindow.openDevTools()
 
-  mainWindow.on('ready-to-show', () => {
-    openCursor()
-    mainWindow.show()
-  })
-
-  mainWindow.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url)
-    return { action: 'deny' }
-  })
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
-  } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
-  }
-}
+// macos去掉默认顶部菜单栏
+Menu.setApplicationMenu(null)
 
 app.whenReady().then(() => {
   electronApp.setAppUserModelId('run.tianci.wallpaper')
@@ -57,12 +21,12 @@ app.whenReady().then(() => {
   })
 
   app.on('activate', function () {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
+    if (BrowserWindow.getAllWindows().length === 0) createMainWindow()
   })
 
   globalMountElog()
   registerIpc()
-  createWindow()
+  createMainWindow()
   import.meta.env.PROD && registerUpdateService().checkForUpdates()
 })
 
