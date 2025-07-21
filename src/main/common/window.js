@@ -53,6 +53,8 @@ function createWindow(bounds) {
         cursorWindow.show()
     })
     // cursorWindow.openDevTools()
+    // 解决macos下光标残留阴影
+    cursorWindow.setHasShadow(false);
     cursorWindow.setBounds(bounds)
     // 忽略鼠标事件，传递给渲染进程
     cursorWindow.setIgnoreMouseEvents(true, { forward: true })
