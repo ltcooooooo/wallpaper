@@ -1,6 +1,6 @@
 {
   "name": "wallpaper",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "一个壁纸软件",
   "main": "./out/main/index.js",
   "author": "liangtianci",
@@ -23,6 +23,7 @@
     "@emoji-mart/data": "^1.2.1",
     "@tailwindcss/postcss": "^4.0.17",
     "animate.css": "^4.1.1",
+    "auto-launch": "^5.0.6",
     "axios": "^1.5.1",
     "cursor-effects": "^1.0.17",
     "electron-log": "^5.3.3",

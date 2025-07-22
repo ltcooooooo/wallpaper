@@ -26,7 +26,7 @@ const cursor = setting.cursor
 onMounted(() => {
     curPreview.value.addEventListener('mouseleave', () => {
         if(cursor.open) return
-        cur.value.destroy()
+        cur.value && cur.value.destroy()
     })
     curPreview.value.addEventListener('mouseenter', () => {
         if(cursor.open) return
@@ -35,6 +35,8 @@ onMounted(() => {
 })
 
 function createCursor() {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if(prefersReducedMotion.matches) return
     const raw = toRaw(options)
     cur.value = new cursorEffects[options.cursorName](raw)
 }

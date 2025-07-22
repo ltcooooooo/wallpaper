@@ -28,7 +28,7 @@
                 <my-tooltip content="最小化" placement="bottom">
                     <el-button @click="minimizeApp" color="#f0f4f9"><i-ep-minus /></el-button>
                 </my-tooltip>
-                <my-tooltip content="关闭" placement="bottom">
+                <my-tooltip content="最小化到系统托盘" placement="bottom">
                     <el-button @click="quitApp" color="#f0f4f9"><i-ep-close /></el-button>
                 </my-tooltip>
             </el-button-group>

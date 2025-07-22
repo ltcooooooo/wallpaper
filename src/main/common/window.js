@@ -3,6 +3,8 @@ import { is } from '@electron-toolkit/utils'
 import { join } from 'path'
 import { set } from "wallpaper";
 
+import icon from '../../../resources/icon.png?asset'
+
 import openCursor from './openCursor'
 
 let cursorWindow = [];
@@ -51,7 +53,7 @@ function createWindow(bounds) {
     if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
         cursorWindow.loadURL(process.env['ELECTRON_RENDERER_URL'] + '#/cursorWindow')
     } else {
-        cursorWindow.loadFile(join(__dirname, '../renderer/index.html' + '#/cursorWindow'))
+        cursorWindow.loadFile(join(__dirname, '../renderer/index.html'), {hash: '#/cursorWindow'})
     }
     cursorWindow.on('ready-to-show', () => {
         cursorWindow.show()
@@ -89,6 +91,7 @@ function createMainWindow() {
     }
   })
   import.meta.env.PROD == false && mainWindow.openDevTools()
+//   mainWindow.openDevTools()
 
   mainWindow.on('ready-to-show', () => {
     openCursor()
@@ -104,6 +107,7 @@ function createMainWindow() {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+  return mainWindow
 }
 
 export { createCursorWindow, destroyCursorWindow, createMainWindow }

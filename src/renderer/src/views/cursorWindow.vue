@@ -21,12 +21,6 @@ function createCursor() {
     const options = cursorType.options
     options.element = cursorWindow.value
     new cursorEffects[options.cursorName](options)
-    // cursorWindow.value.addEventListener('mouseenter', (e) => {
-    //     console.log('enter', e.target)
-    // })
-    // cursorWindow.value.addEventListener('mouseleave', (e) => {
-    //     console.log('leave', e.target)
-    // })
 }
 
 </script>
