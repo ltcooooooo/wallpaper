@@ -14,6 +14,15 @@
 import { useRoute } from 'vue-router';
 const route = useRoute();
 const showTitle = !(/\/cursorWindow$/.test(location.hash));
+
+// 修复windows下右边框消失
+const ua = navigator.userAgent.toLowerCase();
+const isWin = /win/.test(ua)
+if(isWin) setWinAppWidth()
+function setWinAppWidth(){
+  const app = document.querySelector('#app')
+  app.style.width = 'calc(100vw - 2px)'
+}
 </script>
 
 <style>
