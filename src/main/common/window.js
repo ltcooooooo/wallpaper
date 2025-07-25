@@ -7,6 +7,8 @@ import icon from '../../../resources/icon.png?asset'
 
 import openCursor from './openCursor'
 
+import registerUpdateService from '../core/update'
+
 let cursorWindow = [];
 function createCursorWindow(allDisplays) {
     // 创建多屏窗口
@@ -96,6 +98,13 @@ function createMainWindow() {
   mainWindow.on('ready-to-show', () => {
     openCursor()
     mainWindow.show()
+  })
+
+
+  mainWindow.on('show', () => {
+    // 全量更新模块
+    const autoUpdater = registerUpdateService(mainWindow)
+    autoUpdater.checkForUpdates()
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {

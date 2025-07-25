@@ -15,6 +15,10 @@
   box-sizing: border-box;
 }
 
+svg {
+  outline: none;
+}
+
 .drag {
   -webkit-app-region: drag;
 }

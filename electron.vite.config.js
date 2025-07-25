@@ -35,7 +35,7 @@ export default defineConfig({
       Components({
         resolvers: [
           IconsResolver({
-            enabledCollections: ['ep', 'material-symbols', 'solar'],
+            enabledCollections: ['ep', 'material-symbols', 'solar', 'line-md'],
             alias: {
               'ms': 'material-symbols' // 设置别名
             }

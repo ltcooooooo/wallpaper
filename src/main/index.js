@@ -1,12 +1,16 @@
 import { app, BrowserWindow, Menu } from 'electron'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 
+//防止启动多个应用实例
+const additionalData = { myKey: 'liangtianci.wallpaper' }
+const gotTheLock = app.requestSingleInstanceLock(additionalData)
+gotTheLock || app.quit()
+
 import { createMainWindow } from './common/window'
 
 import createTray from './core/tray'
 
 import globalMountElog from './core/logger'
-import registerUpdateService from './core/update'
 import registerIpc from './ipc/index'
 console.log('appData', app.getPath('appData'))
 
@@ -27,11 +31,13 @@ app.whenReady().then(() => {
     }
   })
 
+  // 日志模块
   globalMountElog()
+  // 注册Ipc模块
   registerIpc()
+  // 创建主窗口
   mainWindow = createMainWindow()
   createTray(mainWindow)
-  import.meta.env.PROD && registerUpdateService().checkForUpdates()
 })
 
 app.on('window-all-closed', () => {

@@ -8,6 +8,6 @@ import 'animate.css';
 
 const pinia = createPinia()
 const app = createApp(App)
-initStore(pinia).then(()=>{
+initStore(pinia).then(() => {
     app.use(router).use(pinia).mount('#app')
 })

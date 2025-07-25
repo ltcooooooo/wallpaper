@@ -9,6 +9,13 @@
         </section>
         <section class="right no-drag flex gap-[20px]">
             <el-button-group class="relative">
+                <my-tooltip :content="tipText" placement="bottom">
+                    <el-button @click="updateChange" @dblclick="cancelUpdate" color="#f0f4f9">
+                        <i-line-md-downloading v-show="updateStatus=== 'wait'" class="text-red-500 animated animate-bounce" />
+                        <i-line-md-downloading-loop v-if="updateStatus=== 'updateing'" class="text-orange-500 animated" />
+                        <i-line-md-confirm-circle v-if="updateStatus=== 'downloaded'" class="text-green-500 animated" />
+                    </el-button>
+                </my-tooltip>
                 <my-tooltip content="光标效果" placement="bottom">
                     <el-button @click="$router.push('/cursor')" color="#f0f4f9"><i-solar-cursor-linear /></el-button>
                 </my-tooltip>
@@ -37,9 +44,41 @@
 </template>
 
 <script setup>
+import useUpdate from '@renderer/composables/useUpdater'
+
+const { updateStatus, findUpdate, tipText, updateChange, cancelUpdate } = useUpdate()
+console.log(findUpdate)
+
 //最小化App
 const minimizeApp = () => window.electronAPI.minimize()
 //关闭App
 const quitApp = () => window.electronAPI.quit()
 
 </script>
+
+<style scoped>
+.animate-bounce {
+    animation: bounce 1s 1s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 53%, 100% {
+        -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+    40%, 43% {
+        -webkit-animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+        animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+        -webkit-transform: translate3d(0, -30px, 0) scaleY(1.1);
+        transform: translate3d(0, -3px, 0) scaleY(1.1);
+    }
+    70% {
+        -webkit-animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+        animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+        -webkit-transform: translate3d(0, -15px, 0) scaleY(1.05);
+        transform: translate3d(0, -5px, 0) scaleY(1.05);
+    }
+}
+</style>

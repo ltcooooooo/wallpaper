@@ -1,10 +1,17 @@
 import { autoUpdater } from 'electron-updater'
 import path from 'path'
-import { app } from 'electron'
+import { app, ipcMain } from 'electron'
 
 const isDev = import.meta.env.DEV
 
-function registerUpdateService() {
+ipcMain.on('start-update',()=>{
+    autoUpdater.downloadUpdate()
+})
+ipcMain.on('quit-and-install',()=>{
+    autoUpdater.quitAndInstall()
+})
+
+function registerUpdateService(mainWindow) {
     if (isDev) {
         Object.defineProperty(app, 'isPackaged', {
             get: () => true
@@ -16,24 +23,28 @@ function registerUpdateService() {
     autoUpdater.allowDowngrade = true // 允许降级更新（应付回滚的情况）
 
     autoUpdater.on('checking-for-update', () => {
-        Elog.info('开始检查更新')
+        console.log('checking-for-update')
     })
     autoUpdater.on('update-available', (info) => {
-        Elog.info('发现更新版本', info)
-        autoUpdater.downloadUpdate()
+        Elog.info('find update', info)
+        // autoUpdater.downloadUpdate()
+        mainWindow.webContents.send('update-available', info)
     })
     autoUpdater.on('update-not-available', (info) => {
-        Elog.info('不需要全量更新', info.version)
+        console.log('not update', info.version)
     })
     autoUpdater.on('download-progress', (progressInfo) => {
-        Elog.info('更新进度信息', progressInfo)
+        console.log('download progress', progressInfo)
+        Elog.info('download progress', progressInfo)
+        mainWindow.webContents.send('update-progress', progressInfo)
     })
     autoUpdater.on('update-downloaded', () => {
-        Elog.info('更新下载完成')
-        autoUpdater.quitAndInstall()
+        Elog.info('downloaded')
+        mainWindow.webContents.send('update-downloaded')
     })
     autoUpdater.on('error', (errorMessage) => {
         Elog.error('更新时出错了', errorMessage)
+        mainWindow.webContents.send('update-error')
     })
     return autoUpdater
 }

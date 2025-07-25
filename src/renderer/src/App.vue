@@ -13,7 +13,8 @@
 <script setup>
 import { useRoute } from 'vue-router';
 const route = useRoute();
-const showTitle = !(/\/cursorWindow$/.test(location.hash));
+const isCursorWindow = (/\/cursorWindow$/.test(location.hash));
+const showTitle = !isCursorWindow;
 
 // 修复windows下右边框消失
 const ua = navigator.userAgent.toLowerCase();
