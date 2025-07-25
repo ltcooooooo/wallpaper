@@ -11,9 +11,10 @@
             <el-button-group class="relative">
                 <my-tooltip :content="tipText" placement="bottom">
                     <el-button @click="updateChange" @dblclick="cancelUpdate" color="#f0f4f9">
-                        <i-line-md-downloading v-show="updateStatus=== 'wait'" class="text-red-500 animated animate-bounce" />
-                        <i-line-md-downloading-loop v-if="updateStatus=== 'updateing'" class="text-orange-500 animated" />
-                        <i-line-md-confirm-circle v-if="updateStatus=== 'downloaded'" class="text-green-500 animated" />
+                        <i-line-md-downloading v-if="updateStatus === 'wait'" class="text-red-500 animated animate-bounce" />
+                        <i-line-md-downloading-loop v-if="updateStatus === 'updateing'" class="text-orange-500 animated" />
+                        <i-line-md-confirm-circle v-if="updateStatus === 'downloaded'" class="text-green-500 animated" />
+                        <i-line-md-alert-circle-loop v-if="updateStatus === 'error'" class="text-red-500 animated" />
                     </el-button>
                 </my-tooltip>
                 <my-tooltip content="光标效果" placement="bottom">
