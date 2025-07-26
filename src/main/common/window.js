@@ -104,7 +104,7 @@ function createMainWindow() {
   mainWindow.on('show', () => {
     // 全量更新模块
     const autoUpdater = registerUpdateService(mainWindow)
-    autoUpdater.checkForUpdates()
+    is.dev || autoUpdater.checkForUpdates()
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
