@@ -9,7 +9,7 @@
         </section>
         <section class="right no-drag flex gap-[20px]">
             <el-button-group class="relative">
-                <my-tooltip :content="tipText" placement="bottom">
+                <my-tooltip :content="tipText" placement="bottom" v-if="findUpdate">
                     <el-button @click="updateChange" @dblclick="cancelUpdate" color="#f0f4f9">
                         <i-line-md-downloading v-if="updateStatus === 'wait'" class="text-red-500 animated animate-bounce" />
                         <i-line-md-downloading-loop v-if="updateStatus === 'updateing'" class="text-orange-500 animated" />

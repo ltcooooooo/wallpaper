@@ -33,6 +33,7 @@ declare module 'vue' {
     IEpRefresh: typeof import('~icons/ep/refresh')['default']
     IEpSetting: typeof import('~icons/ep/setting')['default']
     IIcBaselineSystemUpdateAlt: typeof import('~icons/ic/baseline-system-update-alt')['default']
+    ILineMdAlertCircleLoop: typeof import('~icons/line-md/alert-circle-loop')['default']
     ILineMdConfirmCircle: typeof import('~icons/line-md/confirm-circle')['default']
     ILineMdDownloading: typeof import('~icons/line-md/downloading')['default']
     ILineMdDownloadingLoop: typeof import('~icons/line-md/downloading-loop')['default']
