@@ -1,22 +1,6 @@
 <template>
     <div class="h-full">
-        <section
-            class="bg-gray-000 py-2 h-12 grid grid-cols-4 items-center px-4 gap-2 gap-y-1 w-fit min-w-[556px] max-[556px]:grid-cols-2 max-[556px]:min-w-[320px] max-[556px]:h-18">
-            <el-select v-model="wallpaperFilter.value.categories" multiple size="small" style="width:126px"
-                @change="categoriesChange">
-                <el-option v-for="item in wallpaperFilter.options.categories" :key="item.value" :label="item.label"
-                    :value="item.value" />
-            </el-select>
-            <el-select v-model="wallpaperFilter.value.sorting" size="small" style="width: 126px">
-                <el-option v-for="item in wallpaperFilter.options.sorting" :key="item.value" :label="item.label"
-                    :value="item.value" />
-            </el-select>
-            <el-select v-show="showTopRange" v-model="wallpaperFilter.value.topRange" size="small" style="width: 126px">
-                <el-option v-for="item in wallpaperFilter.options.topRange" :key="item.value" :label="item.label"
-                    :value="item.value" />
-            </el-select>
-            <el-button size="small" style="width:34px" @click="refreshList(init)"><i-ep-refresh /></el-button>
-        </section>
+        <wallpaper-search :init="init"/>
         <el-scrollbar @scroll="wallpaperListScroll" ref="wallpaperListScrollRef">
             <div ref="wallpaperListRef"
                 class="h-full flex flex-wrap justify-center p-4 pt-0 gap-3 overflow-auto">
@@ -26,7 +10,7 @@
                 </div>
             </div>
             <div class="flex justify-center pb-3 mb-[50px]">
-                <div v-show="loading"><i-ep-loading class="text-2xl motion-safe:animate-spin" /></div>
+                <div v-show="loading"><i-line-md-loading-twotone-loop class="text-2xl" /></div>
                 <div class="cursor-pointer text-red-500 text-sm" @click="reloadingFn" v-show="reloading">加载失败了，点击重试
                 </div>
                 <div v-show="noMore" class="text-sm text-center text-gray-600">没有更多了哦</div>
@@ -43,7 +27,7 @@ const wallpaperListScrollRef = ref(null)
 //滚动列表
 const wallpaperListRef = ref(null)
 
-const { wallpaperFilter, params, showTopRange, categoriesChange, refreshList } = useSearchParame()
+const { params } = useSearchParame()
 const { wallpaperList, loading, reloading, noMore, init, reloadingFn, wallpaperListScroll } = useWallpaperList({
     wallpaperListScrollRef,
     wallpaperListRef,

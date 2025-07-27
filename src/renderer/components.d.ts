@@ -36,6 +36,7 @@ declare module 'vue' {
     ILineMdConfirmCircle: typeof import('~icons/line-md/confirm-circle')['default']
     ILineMdDownloading: typeof import('~icons/line-md/downloading')['default']
     ILineMdDownloadingLoop: typeof import('~icons/line-md/downloading-loop')['default']
+    ILineMdLoadingTwotoneLoop: typeof import('~icons/line-md/loading-twotone-loop')['default']
     IMsAdd: typeof import('~icons/material-symbols/add')['default']
     IMsDeleteOutlineRounded: typeof import('~icons/material-symbols/delete-outline-rounded')['default']
     IMsDesktopMac: typeof import('~icons/material-symbols/desktop-mac')['default']
@@ -52,5 +53,6 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Title: typeof import('./src/components/Title.vue')['default']
+    WallpaperSearch: typeof import('./src/components/wallpaperSearch.vue')['default']
   }
 }
