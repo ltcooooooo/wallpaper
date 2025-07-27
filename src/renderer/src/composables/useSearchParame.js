@@ -25,16 +25,20 @@ const wallpaperFilter = reactive({
         topRange: ['1w', '1M', '3M', '6M', '1y'], //一周，一月，3月，6月，一年
         sorting: [
             {
-                label: '热门壁纸',
+                label: '壁纸排行',
+                value: 'toplist'
+            },
+            {
+                label: '最多收藏',
+                value: 'favorites'
+            },
+            {
+                label: '最近热门',
                 value: 'hot'
             },
             {
                 label: '随机壁纸',
                 value: 'random'
-            },
-            {
-                label: '壁纸排行',
-                value: 'toplist'
             }
         ],
         topRange: [

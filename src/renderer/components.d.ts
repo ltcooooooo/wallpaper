@@ -48,11 +48,11 @@ declare module 'vue' {
     ISolarCursorLinear: typeof import('~icons/solar/cursor-linear')['default']
     List: typeof import('./src/components/List.vue')['default']
     MyTooltip: typeof import('./src/components/MyTooltip.vue')['default']
-    OptionsGroup: typeof import('./src/components/optionsGroup.vue')['default']
+    OptionsGroup: typeof import('./src/components/OptionsGroup.vue')['default']
     Picker: typeof import('./src/components/emojiPicker/picker.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Title: typeof import('./src/components/Title.vue')['default']
-    WallpaperSearch: typeof import('./src/components/wallpaperSearch.vue')['default']
+    WallpaperSearch: typeof import('./src/components/WallpaperSearch.vue')['default']
   }
 }
