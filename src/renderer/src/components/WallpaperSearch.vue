@@ -58,3 +58,17 @@ const {
   changePurity
 } = useSearchParame(init);
 </script>
+
+<style scoped>
+:deep(.el-tag__close) {
+  display: none;
+}
+
+:deep(.el-select__suffix) {
+  display: none;
+}
+
+:deep(.el-select__wrapper.is-focused) {
+  box-shadow: none;
+}
+</style>

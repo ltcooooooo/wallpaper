@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 
-export default function useUpdate() {
+export default function useUpdater() {
     const findUpdate = ref(false)
     const updateStatus = ref('wait')
     const tipText = ref('有新版本了！单机更新，双击取消')

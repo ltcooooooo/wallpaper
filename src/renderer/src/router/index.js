@@ -1,6 +1,6 @@
 import { createWebHashHistory, createRouter } from 'vue-router'
 
-import ListView from '../views/List.vue'
+import ListView from '../views/wallpaperList.vue'
 
 const routes = [
   {

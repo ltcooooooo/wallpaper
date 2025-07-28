@@ -45,10 +45,9 @@
 </template>
 
 <script setup>
-import useUpdate from '@renderer/composables/useUpdater'
+import useUpdater from '@renderer/composables/useUpdater'
 
-const { updateStatus, findUpdate, tipText, updateChange, cancelUpdate } = useUpdate()
-console.log(findUpdate)
+const { updateStatus, findUpdate, tipText, updateChange, cancelUpdate } = useUpdater()
 
 //最小化App
 const minimizeApp = () => window.electronAPI.minimize()

@@ -10,7 +10,6 @@ export default (image, emit) => {
     const isDel = ref(false)
     const isFavorite = computed(() => !!favoritesList.find(i => i.imgSrc === image.imgSrc))
     async function downloadWallpaper() {
-        console.log('downloadWallpaper', setting.wallpaperSavePath)
         isLoading.value = true
         const downloadResult = await window.electronAPI.downloadWallpaper(image.imgSrc, setting.wallpaperSavePath)
         isLoading.value = false
