@@ -12,9 +12,11 @@
 </template>
 <script setup>
 import { useRoute } from 'vue-router';
+import useIpc from  '@renderer/composables/useIpc';
 const route = useRoute();
 const isCursorWindow = (/\/cursorWindow$/.test(location.hash));
 const showTitle = !isCursorWindow;
+useIpc()
 
 // 修复windows下右边框消失
 const ua = navigator.userAgent.toLowerCase();
