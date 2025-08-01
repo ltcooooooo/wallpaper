@@ -96,12 +96,13 @@ function createMainWindow() {
 //   mainWindow.openDevTools()
 
   mainWindow.on('ready-to-show', () => {
+    openCursor()
     mainWindow.show()
     // 全量更新模块
     const autoUpdater = registerUpdateService(mainWindow)
     is.dev || autoUpdater.checkForUpdates()
-    openCursor()
   })
+
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
