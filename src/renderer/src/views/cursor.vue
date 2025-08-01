@@ -266,7 +266,6 @@ function openCursor(isOpen) {
     } else {
         window.electronAPI.closeCursor()
     }
-    window.electronAPI.changeTrayStatus({name: '光标效果', status: cursor.open})
 }
 
 const dialogVisible = ref(false);

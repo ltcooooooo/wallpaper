@@ -24,7 +24,7 @@ const routes = [
     name: 'cursor',
   },
   {
-    path: '/cursorWindow', component: () => import('../windowPage/cursorWindow.vue'),
+    path: '/cursorWindow', component: () => import('../views/cursorWindow.vue'),
     name: 'cursorWindow',
   }
 ]
