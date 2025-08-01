@@ -1,6 +1,6 @@
 import { createWebHashHistory, createRouter } from 'vue-router'
 
-import ListView from '../views/List.vue'
+import ListView from '../views/wallpaperList.vue'
 
 const routes = [
   {
@@ -24,7 +24,7 @@ const routes = [
     name: 'cursor',
   },
   {
-    path: '/cursorWindow', component: () => import('../windowPage/cursorWindow.vue'),
+    path: '/cursorWindow', component: () => import('../views/cursorWindow.vue'),
     name: 'cursorWindow',
   }
 ]
