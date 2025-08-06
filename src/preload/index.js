@@ -18,8 +18,8 @@ const api = {
   // 删除本地壁纸
   delLocalWallpaper: ( wallpaperPath) => ipcRenderer.invoke('del-local-wallpaper', wallpaperPath),
 
-  // 打开保存地址-暂未用到
-  openWallpaperSaveFolder: (path) => {shell.openPath(path)},
+  // 打开指定路径
+  openfilePath: (path) => {shell.openPath(path)},
 
   // 设置为壁纸
   useWallpaper: ( wallpaperPath) => ipcRenderer.invoke('use-wallpaper', wallpaperPath),

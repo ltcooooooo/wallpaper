@@ -49,6 +49,7 @@ function createWindow(bounds) {
             preload: join(__dirname, '../preload/index.js'),
             sandbox: false,
             spellcheck: false,
+            partition: 'persist:cursorWindow', // 多屏窗口使用同一个session
             webSecurity: import.meta.env.PROD == true
         }
     })
