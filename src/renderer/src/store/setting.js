@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, toRaw, watch } from 'vue'
+import { ref, toRaw, watch, computed } from 'vue'
 import initCursor from '@renderer/utils/cursorEffects/initCursor'
 
 const useSettingStore = defineStore('setting', () => {
@@ -16,8 +16,15 @@ const useSettingStore = defineStore('setting', () => {
             window.electronAPI.setSettingConfig(raw)
         })
     }
+    const savePath = computed(()=>{
+        return {
+            image: setting.value.dataPath + '/images',
+            video: setting.value.dataPath + '/videos'
+        }
+    } )
     return {
         setting,
+        savePath,
         initSetting
     }
 })

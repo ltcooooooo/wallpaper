@@ -5,7 +5,7 @@ import { createCursorWindow, destroyCursorWindow } from '../../common/window'
 
 import { setAutoLaunch } from '../autoLaunch'
 
-const { autoStart, cursor } = configStore.get('settings') || { autoStart: false, cursor: false }
+const { autoStart, cursor } = configStore.get('settings')
 
 let mainWin = null
 

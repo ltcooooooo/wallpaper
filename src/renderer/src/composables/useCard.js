@@ -5,13 +5,13 @@ import useFavoritesStore from '@renderer/store/favorites'
 
 export default (image, emit) => {
     const { favoritesList, addFavoritesImage, delFavoritesImage } = useFavoritesStore()
-    const { setting } = useSettingStore()
+    const { setting, savePath } = useSettingStore()
     const isLoading = ref(false)
     const isDel = ref(false)
     const isFavorite = computed(() => !!favoritesList.find(i => i.imgSrc === image.imgSrc))
     async function downloadWallpaper() {
         isLoading.value = true
-        const downloadResult = await window.electronAPI.downloadWallpaper(image.imgSrc, setting.wallpaperSavePath)
+        const downloadResult = await window.electronAPI.downloadWallpaper(image.imgSrc, savePath.image)
         isLoading.value = false
         MyElMessage({
             message: downloadResult.message,
@@ -23,7 +23,7 @@ export default (image, emit) => {
         isLoading.value = true
         let downloadResult
         if (!isLocalPage) {
-            downloadResult = await window.electronAPI.downloadWallpaper(image.imgSrc, setting.wallpaperSavePath)
+            downloadResult = await window.electronAPI.downloadWallpaper(image.imgSrc, savePath.image)
             if (!downloadResult.success) {
                 console.log('downloadResult', downloadResult.success)
                 MyElMessage({

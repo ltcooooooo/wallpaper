@@ -8,8 +8,8 @@
             ></el-switch>
         </div>
         <div class="flex items-center text-nowrap">
-            <span class="text-right" :style="{minWidth: labelWidth}">壁纸保存位置：</span>
-            <u class="text-blue-500 cursor-pointer overflow-hidden text-ellipsis" :title="setting.wallpaperSavePath" @click="setSavePath">{{ setting.wallpaperSavePath }}</u>
+            <span class="text-right" :style="{minWidth: labelWidth}">文件保存位置：</span>
+            <u class="text-blue-500 cursor-pointer overflow-hidden text-ellipsis" :title="setting.dataPath">{{ setting.dataPath }}</u>
             <el-button type="primary" class="ml-2" size="small" @click="openPath"><i-ms-folder-open-outline-rounded/></el-button>
         </div>
     </div>
@@ -24,7 +24,7 @@ const setSavePath = async () => {
    const result = await window.electronAPI.setSavePath()
    const filePath = result.filePaths[0] || false
    if( filePath ) {
-    setting.wallpaperSavePath = filePath
+    setting.dataPath = filePath
    }
 }
 
@@ -33,6 +33,7 @@ function autoStartChange() {
 }
 
 function openPath() {
-    window.electronAPI.openfilePath(setting.wallpaperSavePath)
+    console.log('打开文件夹', setting.dataPath)
+    window.electronAPI.openfilePath(setting.dataPath)
 }
 </script>
