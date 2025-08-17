@@ -1,10 +1,12 @@
-import { ipcMain } from "electron";
+import { ipcMain, BrowserWindow } from "electron";
 import axios from 'axios'
 import wallpaper from 'wallpaper'
 import sharp from 'sharp'
 import fs from 'fs'
-import { extname, sep } from 'path'
+import { configStore } from '../store/index'
+import { extname, sep, join } from 'path'
 import { imageSizeFromFile } from 'image-size/fromFile'
+import debounce from "lodash.debounce";
 
 function registerWallpaperIpc() {
     ipcMain.handle('use-wallpaper', async (event, imagePath) => {
@@ -28,25 +30,39 @@ function registerWallpaperIpc() {
             return Promise.resolve({ success: false, message: "删除本地壁纸失败" })
         }
     })
-    ipcMain.handle('get-local-wallpaper-List', (event, path) => {
-        try {
-            const validExtensions = ['.jpg', '.png', '.jpeg'];
-            const files = fs.readdirSync(path)
-            const imgArr = files.filter(file => validExtensions.includes(extname(file).toLowerCase()))
-            const images = imgArr.map(file => `${path}${sep}${file}`)
-            return Promise.resolve({ success: true, message: "获取本地壁纸成功", images })
+    ipcMain.handle('get-local-wallpaper-List', async (event, path) => {
+        const result = await getLocalWallpaper(path)
+        if (result.success) {
+            const win = BrowserWindow.fromWebContents(event.sender)
+            const dataPath = configStore.get('settings').dataPath
+            const handleChangeFs = debounce((eventType, filename) => {
+                console.log(`Image file ${filename} was ${eventType}`);
+                if(eventType === 'rename') {
+                    //@todo path 后面要改一下
+                    getLocalWallpaper(path).then(res => {
+                        win.webContents.send('local-wallpaper-changed', res)
+                    })
+                    // win.webContents.send('local-wallpaper-changed', result)
+                }
+            },500)
+            
+            fs.watch(
+                join(dataPath, 'images'),
+                {
+                    persistent: false
+                },
+                handleChangeFs
+            )  
         }
-        catch (err) {
-            return Promise.resolve({ success: false, message: "获取本地壁纸失败" })
-        }
+        return result
     })
     ipcMain.handle('get-local-wallpaper', async (event, filePath) => {
         try {
             const imageSize = await imageSizeFromFile(filePath)
             const imgBuffer = await imgToBuffer(filePath)
-            const { ctimeMs } = fs.statSync(filePath)
+            const { mtimeMs } = fs.statSync(filePath)
             console.log(filePath,fs.statSync(filePath))
-            const data = { imgBuffer, ctimeMs, imgSrc: filePath, size: `${imageSize.width}x${imageSize.height}` }
+            const data = { imgBuffer, mtimeMs, imgSrc: filePath, size: `${imageSize.width}x${imageSize.height}` }
             return Promise.resolve({ success: true, data})
         } catch (err) {
             return Promise.resolve({ success: false, message: err.message })
@@ -58,26 +74,43 @@ function registerWallpaperIpc() {
         const name = last.replace(/wallhaven-/, '')
         const filePath = path + (/\//.test(path) ? "/" : "\\") + name
 
-        const writer = fs.createWriteStream(filePath);
         try {
             const res = await axios.get(url, {
-                responseType: 'stream'
+                responseType: 'arraybuffer'
             })
-            res.data.pipe(writer);
-            return new Promise((resolve, reject) => {
-            writer.on('finish', () => {
-                resolve({ success: true, message: '下载成功', filePath });
-            });
-            writer.on('error', (err) => {
-                resolve({ success: false, message: '壁纸下载失败: ' + err.message });
-                fs.unlink(filePath, () => {}); // 删除未完成的文件
-            });
-        });
+            const imageBuffer = Buffer.from(res.data);
+            try {
+                const result = fs.writeFileSync(filePath, imageBuffer)
+                return Promise.resolve({ success: true, message: '下载成功', filePath })
+            }
+            catch (err) {
+                return Promise.resolve({ success: false, message: '壁纸下载失败,请检查壁纸文件夹路径' })
+            }
         }
         catch (err) {
             console.log(err)
             return Promise.resolve({ success: false, message: "壁纸下载失败" })
         }
+        // const writer = fs.createWriteStream(filePath);
+        // try {
+        //     const res = await axios.get(url, {
+        //         responseType: 'stream'
+        //     })
+        //     res.data.pipe(writer);
+        //     return new Promise((resolve, reject) => {
+        //         writer.on('finish', () => {
+        //             resolve({ success: true, message: '下载成功', filePath });
+        //         });
+        //         writer.on('error', (err) => {
+        //             resolve({ success: false, message: '壁纸下载失败: ' + err.message });
+        //             fs.unlink(filePath, () => {}); // 删除未完成的文件
+        //         });
+        //     });
+        // }
+        // catch (err) {
+        //     console.log(err)
+        //     return Promise.resolve({ success: false, message: "壁纸下载失败" })
+        // }
     }
     async function imgToBuffer(imgpath) {
         const optimizedBuffer = await sharp(imgpath)
@@ -89,6 +122,19 @@ function registerWallpaperIpc() {
             })
             .toBuffer()
         return optimizedBuffer
+    }
+
+    function getLocalWallpaper(path) {
+        try {
+            const validExtensions = ['.jpg', '.png', '.jpeg'];
+            const files = fs.readdirSync(path)
+            const imgArr = files.filter(file => validExtensions.includes(extname(file).toLowerCase()))
+            const images = imgArr.map(file => `${path}${sep}${file}`)
+            return Promise.resolve({ success: true, message: "获取本地壁纸成功", images })
+        }
+        catch (err) {
+            return Promise.resolve({ success: false, message: "获取本地壁纸失败" })
+        }
     }
 }
 

@@ -13,6 +13,8 @@ const api = {
   setFavoritesList: (value) => ipcRenderer.send('set-favorites-list', value),
   // 获取本地壁纸列表
   getLocalWallpaperList: (path) => ipcRenderer.invoke('get-local-wallpaper-List', path),
+  // 本地壁纸有变动
+  localWallpaperChanged: (callback) => ipcRenderer.on("local-wallpaper-changed", (_, value) => callback(value)),
   // 获取本地壁纸
   getLocalWallpaper: (path) => ipcRenderer.invoke('get-local-wallpaper', path),
   // 删除本地壁纸
