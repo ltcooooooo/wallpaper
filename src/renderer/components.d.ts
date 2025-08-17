@@ -53,7 +53,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Title: typeof import('./src/components/Title.vue')['default']
-    WallpaperList: typeof import('./src/components/wallpaperList.vue')['default']
+    WallpaperList: typeof import('./src/components/WallpaperList.vue')['default']
     WallpaperSearch: typeof import('./src/components/WallpaperSearch.vue')['default']
   }
 }

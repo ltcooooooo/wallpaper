@@ -39,14 +39,6 @@ function registerWallpaperIpc() {
         catch (err) {
             return Promise.resolve({ success: false, message: "获取本地壁纸失败" })
         }
-        // const imgPrmise = imgArr.map(async file => {
-        //     
-        //     const imageSize = await imageSizeFromFile(filePath)
-        //     const imgBuffer = await imgToBuffer(filePath)
-        //     return { imgBuffer, imgSrc: filePath, size: `${imageSize.width}x${imageSize.height}` }
-        // })
-        // const images = await Promise.all(imgPrmise)
-        // return Promise.resolve({ success: true, message: '获取本地壁纸成功', data: images })
     })
     ipcMain.handle('get-local-wallpaper', async (event, filePath) => {
         try {
@@ -65,18 +57,22 @@ function registerWallpaperIpc() {
         const last = urlSplit[urlSplit.length - 1]
         const name = last.replace(/wallhaven-/, '')
         const filePath = path + (/\//.test(path) ? "/" : "\\") + name
+
+        const writer = fs.createWriteStream(filePath);
         try {
             const res = await axios.get(url, {
-                responseType: 'arraybuffer'
+                responseType: 'stream'
             })
-            const imageBuffer = Buffer.from(res.data);
-            try {
-                const result = fs.writeFileSync(filePath, imageBuffer)
-                return Promise.resolve({ success: true, message: '下载成功', filePath })
-            }
-            catch (err) {
-                return Promise.resolve({ success: false, message: '壁纸下载失败,请检查壁纸文件夹路径' })
-            }
+            res.data.pipe(writer);
+            return new Promise((resolve, reject) => {
+            writer.on('finish', () => {
+                resolve({ success: true, message: '下载成功', filePath });
+            });
+            writer.on('error', (err) => {
+                resolve({ success: false, message: '壁纸下载失败: ' + err.message });
+                fs.unlink(filePath, () => {}); // 删除未完成的文件
+            });
+        });
         }
         catch (err) {
             console.log(err)
@@ -84,7 +80,6 @@ function registerWallpaperIpc() {
         }
     }
     async function imgToBuffer(imgpath) {
-        // const readStream = fs.createReadStream(imgpath)
         const optimizedBuffer = await sharp(imgpath)
             .resize(400) // 限制宽度300px，高度自动等比缩放
             .jpeg({

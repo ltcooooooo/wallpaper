@@ -1,5 +1,5 @@
 import { Tray, Menu, ipcMain } from 'electron'
-import { trayIcon, autoStartOff, autoStartOn, cursorOn, cursorOff, quit } from './getTrayIcon.js'
+import { trayIcon, autoStartOff, autoStartOn, cursorOn, cursorOff, quit, openWin } from './getTrayIcon.js'
 import { configStore } from '../../store'
 import { createCursorWindow, destroyCursorWindow } from '../../common/window'
 
@@ -10,12 +10,13 @@ const { autoStart, cursor } = configStore.get('settings') || { autoStart: false,
 let mainWin = null
 
 const contextMenu = Menu.buildFromTemplate([
-    { id: 4, label: '光标效果', type: 'normal', status: true, visible: cursor.open, icon: cursorOn, click: trayItemStatusChange },
-    { id: 5, label: '光标效果', type: 'normal', status: false, visible: !cursor.open, icon: cursorOff, click: trayItemStatusChange },
-    { id: 1, label: '开机自启动', type: 'normal', status: true, visible: autoStart, icon: autoStartOn, click: trayItemStatusChange },
-    { id: 2, label: '开机自启动', type: 'normal', status: false, visible: !autoStart, icon: autoStartOff, click: trayItemStatusChange },
-    { id: 3, label: '退出', type: 'normal', role: 'quit', icon: quit },
-])
+    { id: 1, sort: 3, label: '开机自启动', status: true, visible: autoStart, icon: autoStartOn, click: trayItemStatusChange },
+    { id: 2, sort: 2, label: '开机自启动', status: false, visible: !autoStart, icon: autoStartOff, click: trayItemStatusChange },
+    { id: 3, sort: 1, label: '退出', role: 'quit', icon: quit },
+    { id: 4, sort: 4, label: '光标效果', status: true, visible: cursor.open, icon: cursorOn, click: trayItemStatusChange },
+    { id: 5, sort: 5, label: '光标效果', status: false, visible: !cursor.open, icon: cursorOff, click: trayItemStatusChange },
+    { id: 6, sort: 6, label: '打开主窗口', icon: openWin, click: () => mainWin.show() },
+].sort((a, b) => b.sort - a.sort))
 
 ipcMain.on('change-tray-status', (_, params) => {
     const { name, status } = params
