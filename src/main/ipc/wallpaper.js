@@ -1,4 +1,5 @@
 import { ipcMain, BrowserWindow } from "electron";
+import chokidar from 'chokidar';
 import axios from 'axios'
 import wallpaper from 'wallpaper'
 import sharp from 'sharp'
@@ -35,24 +36,33 @@ function registerWallpaperIpc() {
         if (result.success) {
             const win = BrowserWindow.fromWebContents(event.sender)
             const dataPath = configStore.get('settings').dataPath
-            const handleChangeFs = debounce((eventType, filename) => {
-                console.log(`Image file ${filename} was ${eventType}`);
-                if(eventType === 'rename') {
-                    //@todo path 后面要改一下
-                    getLocalWallpaper(path).then(res => {
-                        win.webContents.send('local-wallpaper-changed', res)
-                    })
-                    // win.webContents.send('local-wallpaper-changed', result)
-                }
+            const handleChangeFs = debounce((filePath) => {
+                console.log(`Image file ${filePath}`);
+                getLocalWallpaper(path).then(res => {
+                    console.log('send local-wallpaper-changed')
+                    win.webContents.send('local-wallpaper-changed', res)
+                })
             },500)
+
+            const watcher = chokidar
+            .watch(join(dataPath, 'images'), {persistent: false})
+            .on('ready', () => {
+                watcher
+                .on('unlink', handleChangeFs)
+                .on('add', handleChangeFs)
+            })
+            // .on('all', (eventType, path) => {
+            //     console.log(`File ${path} has been ${eventType}`);
+            // })
             
-            fs.watch(
-                join(dataPath, 'images'),
-                {
-                    persistent: false
-                },
-                handleChangeFs
-            )  
+            // fs.watch(
+            //     join(dataPath, 'images'),
+            //     {
+            //         persistent: false
+            //     },
+            //     (a,b) =>{console.log('a',a, 'b', b)}
+            // )  
+            
         }
         return result
     })
@@ -61,7 +71,7 @@ function registerWallpaperIpc() {
             const imageSize = await imageSizeFromFile(filePath)
             const imgBuffer = await imgToBuffer(filePath)
             const { mtimeMs } = fs.statSync(filePath)
-            console.log(filePath,fs.statSync(filePath))
+            // console.log(filePath,fs.statSync(filePath))
             const data = { imgBuffer, mtimeMs, imgSrc: filePath, size: `${imageSize.width}x${imageSize.height}` }
             return Promise.resolve({ success: true, data})
         } catch (err) {
@@ -84,6 +94,7 @@ function registerWallpaperIpc() {
                 return Promise.resolve({ success: true, message: '下载成功', filePath })
             }
             catch (err) {
+                console.log('壁纸下载失败,请检查壁纸文件夹路径', err)
                 return Promise.resolve({ success: false, message: '壁纸下载失败,请检查壁纸文件夹路径' })
             }
         }
@@ -133,6 +144,7 @@ function registerWallpaperIpc() {
             return Promise.resolve({ success: true, message: "获取本地壁纸成功", images })
         }
         catch (err) {
+            console.log('获取本地壁纸失败',err)
             return Promise.resolve({ success: false, message: "获取本地壁纸失败" })
         }
     }
