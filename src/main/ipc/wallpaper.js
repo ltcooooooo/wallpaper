@@ -45,7 +45,11 @@ function registerWallpaperIpc() {
             },500)
 
             const watcher = chokidar
-            .watch(join(dataPath, 'images'), {persistent: false})
+            .watch(join(dataPath, 'images'), 
+            {
+                persistent: false,
+                awaitWriteFinish: true
+            })
             .on('ready', () => {
                 watcher
                 .on('unlink', handleChangeFs)
@@ -54,14 +58,6 @@ function registerWallpaperIpc() {
             // .on('all', (eventType, path) => {
             //     console.log(`File ${path} has been ${eventType}`);
             // })
-            
-            // fs.watch(
-            //     join(dataPath, 'images'),
-            //     {
-            //         persistent: false
-            //     },
-            //     (a,b) =>{console.log('a',a, 'b', b)}
-            // )  
             
         }
         return result
@@ -84,48 +80,48 @@ function registerWallpaperIpc() {
         const name = last.replace(/wallhaven-/, '')
         const filePath = path + (/\//.test(path) ? "/" : "\\") + name
 
-        try {
-            const res = await axios.get(url, {
-                responseType: 'arraybuffer'
-            })
-            const imageBuffer = Buffer.from(res.data);
-            try {
-                const result = fs.writeFileSync(filePath, imageBuffer)
-                return Promise.resolve({ success: true, message: '下载成功', filePath })
-            }
-            catch (err) {
-                console.log('壁纸下载失败,请检查壁纸文件夹路径', err)
-                return Promise.resolve({ success: false, message: '壁纸下载失败,请检查壁纸文件夹路径' })
-            }
-        }
-        catch (err) {
-            console.log(err)
-            return Promise.resolve({ success: false, message: "壁纸下载失败" })
-        }
-        // const writer = fs.createWriteStream(filePath);
         // try {
         //     const res = await axios.get(url, {
-        //         responseType: 'stream'
+        //         responseType: 'arraybuffer'
         //     })
-        //     res.data.pipe(writer);
-        //     return new Promise((resolve, reject) => {
-        //         writer.on('finish', () => {
-        //             resolve({ success: true, message: '下载成功', filePath });
-        //         });
-        //         writer.on('error', (err) => {
-        //             resolve({ success: false, message: '壁纸下载失败: ' + err.message });
-        //             fs.unlink(filePath, () => {}); // 删除未完成的文件
-        //         });
-        //     });
+        //     const imageBuffer = Buffer.from(res.data);
+        //     try {
+        //         const result = fs.writeFileSync(filePath, imageBuffer)
+        //         return Promise.resolve({ success: true, message: '下载成功', filePath })
+        //     }
+        //     catch (err) {
+        //         console.log('壁纸下载失败,请检查壁纸文件夹路径', err)
+        //         return Promise.resolve({ success: false, message: '壁纸下载失败,请检查壁纸文件夹路径' })
+        //     }
         // }
         // catch (err) {
         //     console.log(err)
         //     return Promise.resolve({ success: false, message: "壁纸下载失败" })
         // }
+        const writer = fs.createWriteStream(filePath);
+        try {
+            const res = await axios.get(url, {
+                responseType: 'stream'
+            })
+            res.data.pipe(writer);
+            return new Promise((resolve, reject) => {
+                writer.on('finish', () => {
+                    resolve({ success: true, message: '下载成功', filePath });
+                });
+                writer.on('error', (err) => {
+                    resolve({ success: false, message: '壁纸下载失败: ' + err.message });
+                    fs.unlink(filePath, () => {}); // 删除未完成的文件
+                });
+            });
+        }
+        catch (err) {
+            console.log(err)
+            return Promise.resolve({ success: false, message: "壁纸下载失败" })
+        }
     }
     async function imgToBuffer(imgpath) {
         const optimizedBuffer = await sharp(imgpath)
-            .resize(400) // 限制宽度300px，高度自动等比缩放
+            .resize(400) // 限制宽度400px，高度自动等比缩放
             .jpeg({
                 quality: 60, // 适当降低质量
                 progressive: true, // 启用渐进式JPEG
