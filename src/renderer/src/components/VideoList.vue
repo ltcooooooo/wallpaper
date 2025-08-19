@@ -7,28 +7,25 @@
           v-for="item in wallpaperList"
           :key="item.url"
         >
-          <Card :data="item" type="video" v-slot="cardData" >
+          <Card :data="item" type="video" page="video" v-slot="CD" >
             <section
-            class="absolute bottom-0 left-0 bg-[rgba(0,0,0,.4)] text-xs flex items-center justify-between px-3 w-full h-9 translate-y-[100%]  group-hover:translate-y-0 transition">
-            <div class="text-white">{{ card.data.size }}</div>
-            <div class="text-white">
-                <my-tooltip v-if="buttonShow.favorite" content="收藏">
-                    <el-button type="warning" size="small" @click="addFavorites(data)"><i-ms-kid-star-outline /></el-button>
-                </my-tooltip>
-                <my-tooltip v-if="buttonShow.unFavorite" content="取消收藏">
-                    <el-button type="warning" size="small" @click="delFavorites(data, isFavoritePage)"><i-ms-kid-star /></el-button>
-                </my-tooltip>
-                <my-tooltip v-if="buttonShow.download" content="下载">
-                    <el-button type="success" size="small" @click="downloadWallpaper" :loading="isLoading"><i-ms-download-rounded v-show="!isLoading" /></el-button>
-                </my-tooltip>
-                <my-tooltip v-if="buttonShow.local" content="删除">
-                    <el-button type="danger" size="small" @click="delLocalWallpaper"><i-ms-delete-outline-rounded /></el-button>
-                </my-tooltip>
-                <my-tooltip content="设为壁纸">
-                    <el-button type="primary" size="small" @click="setWallpaper({ isLocalPage })" :loading="isLoading"><i-ms-desktop-mac v-show="!isLoading" /></el-button>
-                </my-tooltip>
-            </div>
-        </section>
+              class="absolute bottom-0 left-0 bg-[rgba(0,0,0,.4)] text-xs flex items-center justify-between px-3 w-full h-9 translate-y-[100%]  group-hover:translate-y-0 transition">
+              <div class="text-white">{{ filesize(item.size) }}</div>
+              <div class="text-white">
+                  <!-- <my-tooltip v-if="!CD.isFavorite" content="收藏">
+                      <el-button type="warning" size="small" @click="CD.addFavorites"><i-ms-kid-star-outline /></el-button>
+                  </my-tooltip>
+                  <my-tooltip v-if="CD.isFavorite" content="取消收藏">
+                      <el-button type="warning" size="small" @click="CD.delFavorites"><i-ms-kid-star /></el-button>
+                  </my-tooltip> -->
+                  <my-tooltip content="下载">
+                      <el-button type="success" size="small" @click="CD.downloadWallpaper" :loading="CD.isLoading"><i-ms-download-rounded v-show="!CD.isLoading" /></el-button>
+                  </my-tooltip>
+                  <!-- <my-tooltip content="设为壁纸">
+                      <el-button type="primary" size="small" @click="CD.setWallpaper" :loading="CD.isLoading"><i-ms-desktop-mac v-show="!CD.isLoading" /></el-button>
+                  </my-tooltip> -->
+              </div>
+            </section>
           </Card>
         </div>
       </list>
@@ -38,6 +35,7 @@
 <script setup>
 import { reactive, computed } from "vue";
 import { getVideoList } from "../api/video";
+import { filesize } from "filesize";
 
 // const { params } = useSearchParame();
 
@@ -77,9 +75,9 @@ async function getWallpaperList() {
     const res = await getVideoList(params);
     console.log(res);
     const { videos, total } = await getVideoList(params);
-    videos.forEach(video => {
-      video.smallSrc = video.cover;
-    });
+    // videos.forEach(video => {
+    //   video.smallSrc = video.cover;
+    // });
     wallpaperList.push(...videos);
     loadMore.loading = false;
     if (loadMore.reLoading) reLoading = false;

@@ -1,18 +1,18 @@
 <template>
     <section class="card w-full h-full relative group animate__animated" :class="{'animate__fadeOut': isDel}">
-        <img :src="data.smallSrc" alt="" class="object-cover min-h-full min-w-full">
+        <img :src="cardImageSrc" alt="" class="object-cover min-h-full min-w-full">
         <slot 
             :data="data"
             :addFavorites="addFavorites" 
             :delFavorites="delFavorites"
             :isLoading="isLoading"
-            :isFavoritePage="isFavoritePage"
             :isFavorite="isFavorite"
-            :isLocalPage="isLocalPage"
             :downloadWallpaper="downloadWallpaper"
             :setWallpaper="setWallpaper"
             :delLocalWallpaper="delLocalWallpaper"
         />
+            <!-- :isFavoritePage="isFavoritePage" -->
+            <!-- :isLocalPage="isLocalPage" -->
         <!-- <section
             class="absolute bottom-0 left-0 bg-[rgba(0,0,0,.4)] text-xs flex items-center justify-between px-3 w-full h-9 translate-y-[100%]  group-hover:translate-y-0 transition">
             <div class="text-white">{{ data.size }}</div>
@@ -41,10 +41,10 @@ import useCard from '../composables/useCard'
 const emit = defineEmits(['delWallpaper'])
 const { data, page } = defineProps(['data', 'page'])
 console.log('data', data, page)
-const isLocalPage = page === 'local'
-const isFavoritePage = page === 'favorites'
+// const isLocalPage = page === 'local'
+// const isFavoritePage = page === 'favorites'
 
-const { isLoading, isFavorite, isDel, downloadWallpaper, setWallpaper, delLocalWallpaper, addFavorites, delFavorites } = useCard({data, emit, page})
+const { isLoading, isFavorite, isDel, cardImageSrc, downloadWallpaper, setWallpaper, delLocalWallpaper, addFavorites, delFavorites } = useCard({data, emit, page})
 
 </script>
 <style scoped>
