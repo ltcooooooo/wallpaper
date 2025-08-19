@@ -7,7 +7,20 @@
           v-for="item in readerList"
           :key="item.imgSrc"
         >
-          <Card :image="item" page="local"/>
+        <Card :data="item" type="image" page="imageLocal" v-slot="CD" >
+            <section
+              class="absolute bottom-0 left-0 bg-[rgba(0,0,0,.4)] text-xs flex items-center justify-between px-3 w-full h-9 translate-y-[100%]  group-hover:translate-y-0 transition">
+              <div class="text-white">{{ item.size }}</div>
+              <div class="text-white">
+                  <my-tooltip  content="删除">
+                      <el-button type="danger" size="small" @click="CD.delLocalWallpaper"><i-ms-delete-outline-rounded /></el-button>
+                  </my-tooltip>
+                  <my-tooltip content="设为壁纸">
+                      <el-button type="primary" size="small" @click="CD.setWallpaper" :loading="CD.isLoading"><i-ms-desktop-mac v-show="!CD.isLoading" /></el-button>
+                  </my-tooltip>
+              </div>
+            </section>
+          </Card>
         </div>
       </div>
     </el-scrollbar>
@@ -72,17 +85,21 @@ async function getWallpaper(imagePath) {
 
 // 图片文件夹有文件变动更新列表
 async function updateWallpaperList(newList) {
+  console.log('更新')
   // 被删除的图片
   wallpaperList.value = new Set(newList);
+  console.log('wallpaperList', wallpaperList.value)
   const delArr = readerList.value.reduce((pre, image,index)=>{
     if(!wallpaperList.value.has(image.imgSrc)) {
       pre.unshift(index)
     }
     return pre
   }, [])
+  console.log('delArr', delArr)
   for (const index of delArr) {
     readerList.value.splice(index, 1)
   }
+  console.log('readerList', readerList.value)
   // 新增加的图片
   for(const image of newList) {
     if(!readerList.value.find(item => item.imgSrc === image)) {

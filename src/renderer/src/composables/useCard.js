@@ -3,27 +3,28 @@ import { ref, computed, toRaw } from 'vue'
 import useSettingStore from '@renderer/store/setting'
 import useFavoritesStore from '@renderer/store/favorites'
 
-export default (image, emit) => {
+export default ({data, emit, page}) => {
     const { favoritesList, addFavoritesImage, delFavoritesImage } = useFavoritesStore()
     const { setting, savePath } = useSettingStore()
     const isLoading = ref(false)
     const isDel = ref(false)
-    const isFavorite = computed(() => !!favoritesList.find(i => i.imgSrc === image.imgSrc))
+    const isFavorite = computed(() => !!favoritesList.find(i => i.imgSrc === data.imgSrc))
     async function downloadWallpaper() {
         isLoading.value = true
-        const downloadResult = await window.electronAPI.downloadWallpaper(image.imgSrc, savePath.image)
+        const downloadResult = await window.electronAPI.downloadWallpaper(data.imgSrc, savePath.image)
         isLoading.value = false
         MyElMessage({
             message: downloadResult.message,
             type: downloadResult.success ? 'success' : 'error',
         })
-
     }
-    async function setWallpaper({ isLocalPage }) {
+    async function setWallpaper() {
+        const isLocalPage = page ==='imageLocal'
+        console.log('isLocalPage', isLocalPage)
         isLoading.value = true
         let downloadResult
         if (!isLocalPage) {
-            downloadResult = await window.electronAPI.downloadWallpaper(image.imgSrc, savePath.image)
+            downloadResult = await window.electronAPI.downloadWallpaper(data.imgSrc, savePath.image)
             if (!downloadResult.success) {
                 console.log('downloadResult', downloadResult.success)
                 MyElMessage({
@@ -34,7 +35,7 @@ export default (image, emit) => {
                 return
             }
         }
-        const useResult = await window.electronAPI.useWallpaper(isLocalPage ? image.imgSrc : downloadResult.filePath)
+        const useResult = await window.electronAPI.useWallpaper(isLocalPage ? data.imgSrc : downloadResult.filePath)
         isLoading.value = false
         MyElMessage({
             message: useResult.message,
@@ -44,8 +45,8 @@ export default (image, emit) => {
     }
 
     async function delLocalWallpaper() {
-        console.log('image.imgSrc', image.imgSrc)
-        const delResult = await window.electronAPI.delLocalWallpaper(image.imgSrc)
+        console.log('image.imgSrc', data.imgSrc)
+        const delResult = await window.electronAPI.delLocalWallpaper(data.imgSrc)
         if(delResult.success) {
             isDel.value = true
         }
@@ -55,15 +56,15 @@ export default (image, emit) => {
         })
     }
 
-    function addFavorites(image) {
-        addFavoritesImage(image)
+    function addFavorites() {
+        addFavoritesImage(data)
     }
-    function delFavorites(image, isFavoritePage) {
-        if (isFavoritePage) {
+    function delFavorites() {
+        if (page === 'imageFavorites') {
             isDel.value = true
-            setTimeout(() => delFavoritesImage(image), 400);
+            setTimeout(() => delFavoritesImage(data), 400);
         } else {
-            delFavoritesImage(image)
+            delFavoritesImage(data)
         }
     }
     return { isLoading, isFavorite, isDel, downloadWallpaper, setWallpaper, delLocalWallpaper, addFavorites, delFavorites }
