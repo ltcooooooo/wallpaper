@@ -19,8 +19,8 @@ const showTitle = !isCursorWindow;
 useIpc()
 
 // 修复windows下右边框消失
-const ua = navigator.userAgent.toLowerCase();
-const isWin = /win/.test(ua)
+const isWin = window.electron.process.platform === 'win32'
+
 if(isWin) setWinAppWidth()
 function setWinAppWidth(){
   const app = document.querySelector('#app')
