@@ -1,6 +1,9 @@
 import { app, BrowserWindow, Menu } from 'electron'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 
+import sequelize from './models/db'
+import syncDb from './models/sync'
+
 //防止启动多个应用实例
 const additionalData = { myKey: 'liangtianci.wallpaper' }
 const gotTheLock = app.requestSingleInstanceLock(additionalData)
@@ -33,8 +36,17 @@ app.whenReady().then(() => {
 
   // 日志模块
   globalMountElog()
+
+  //数据库
+  sequelize.authenticate().then(() => {
+    syncDb()
+  }).catch((error) => {
+    Elog.error('Unable to connect to the database:', error);
+  });
+
   // 注册Ipc模块
   registerIpc()
+  
   // 创建主窗口
   mainWindow = createMainWindow()
   createTray(mainWindow)

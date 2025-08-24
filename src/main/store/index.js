@@ -3,7 +3,7 @@ import { app } from 'electron'
 import { join } from 'path'
 import fs from 'fs-extra'
 
-const dataPath = join(app.getPath('appData'), app.getName(), 'data')
+const dataPath = join(app.getPath('userData'), 'data')
 fs.ensureDirSync(join(dataPath, 'images'))
 fs.ensureDirSync(join(dataPath, 'videos'))
 

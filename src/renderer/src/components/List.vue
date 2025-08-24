@@ -2,6 +2,7 @@
   <el-scrollbar @end-reached="loadMore.scrollLoadFn">
     <div class="h-full flex flex-wrap justify-center p-4 pt-0 gap-3 overflow-auto">
       <slot/>
+      <div v-for="i in 3" class="w-75 h-0 overflow-hidden" />
     </div>
     <div class="flex justify-center pb-4" v-if="loadMore.scrollLoad">
       <div v-show="loadMore.loading"><i-line-md-loading-twotone-loop class="text-2xl" /></div>

@@ -11,8 +11,8 @@ const api = {
   // 收藏数据
   getFavoritesList: () => ipcRenderer.invoke('get-favorites-list'),
   setFavoritesList: (value) => ipcRenderer.send('set-favorites-list', value),
-  // 获取本地壁纸列表
-  getLocalWallpaperList: (path) => ipcRenderer.invoke('get-local-wallpaper-List', path),
+  // 获取本地图片列表
+  getLocalImageList: (params) => ipcRenderer.invoke('get-local-image-List', params),
   // 本地壁纸有变动
   localWallpaperChanged: (callback) => ipcRenderer.on("local-wallpaper-changed", (_, value) => callback(value)),
   // 获取本地壁纸
@@ -26,7 +26,7 @@ const api = {
   // 设置为壁纸
   useWallpaper: ( wallpaperPath) => ipcRenderer.invoke('use-wallpaper', wallpaperPath),
   // 下载壁纸
-  downloadWallpaper: (url, wallpaperPath) => ipcRenderer.invoke('download-wallpaper', url, wallpaperPath),
+  downloadImage: (params) => ipcRenderer.invoke('download-image', params),
 
   // 打开光标效果
   openCursor: (allDisplays) => ipcRenderer.send("open-cursor", allDisplays),

@@ -20,26 +20,22 @@ export default ({data, emit, page}) => {
     })
     const pageOptions = {
         image: {
-            downloadFn: window.electronAPI.downloadWallpaper,
-            downloadUrl: data.imgSrc,
+            downloadFn: window.electronAPI.downloadImage,
             downloadSavePath: savePath.image
         },
         video: {
             downloadFn: window.electronAPI.downloadWallpaper,
-            downloadUrl: data.url,
             downloadSavePath: savePath.video
         }
     }
     async function downloadWallpaper() {
-        console.log('page', page)
         isLoading.value = true
         const downloadFn = pageOptions[page].downloadFn
-        const downloadUrl = pageOptions[page].downloadUrl
         const downloadSavePath = pageOptions[page].downloadSavePath
-        console.log('downloadUrl', downloadUrl)
-        console.log('downloadSavePath', downloadSavePath)
-        // return
-        const downloadResult = await downloadFn(downloadUrl, downloadSavePath)
+        const downloadResult = await downloadFn({
+            ...data,
+            downloadSavePath
+        })
         isLoading.value = false
         MyElMessage({
             message: downloadResult.message,
@@ -52,7 +48,12 @@ export default ({data, emit, page}) => {
         isLoading.value = true
         let downloadResult
         if (!isLocalPage) {
-            downloadResult = await window.electronAPI.downloadWallpaper(data.imgSrc, savePath.image)
+            const downloadFn = pageOptions[page].downloadFn
+            const downloadSavePath = pageOptions[page].downloadSavePath
+            downloadResult = await downloadFn({
+                ...data,
+                downloadSavePath
+            })
             if (!downloadResult.success) {
                 console.log('downloadResult', downloadResult.success)
                 MyElMessage({
@@ -63,7 +64,7 @@ export default ({data, emit, page}) => {
                 return
             }
         }
-        const useResult = await window.electronAPI.useWallpaper(isLocalPage ? data.imgSrc : downloadResult.filePath)
+        const useResult = await window.electronAPI.useWallpaper(isLocalPage ? data.savePath : downloadResult.savePath)
         isLoading.value = false
         MyElMessage({
             message: useResult.message,

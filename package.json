@@ -39,7 +39,9 @@
     "lodash.debounce": "^4.0.8",
     "pinia": "^3.0.2",
     "postcss": "^8.5.3",
+    "sequelize": "^6.37.7",
     "sharp": "^0.34.2",
+    "sqlite3": "^5.1.7",
     "tailwindcss": "^4.0.17",
     "vue-router": "^4.5.0",
     "wallpaper": "5"
