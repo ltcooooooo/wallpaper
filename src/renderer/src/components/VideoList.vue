@@ -1,6 +1,6 @@
 <template>
   <div class="h-full flex flex-col">
-    <section class="flex-1 w-full min-h-0">
+    <section class="flex-1 w-full min-h-0 pt-4">
       <list :loadMore="loadMore">
         <div
           class="w-75 h-50 rounded-md overflow-hidden shadow-xl transition-all hover:shadow-2xl hover:translate-y-[-2px]"

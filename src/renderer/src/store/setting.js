@@ -7,14 +7,11 @@ const useSettingStore = defineStore('setting', () => {
 
     async function initSetting() {
         const settingConfig = await window.electronAPI.getSettingConfig()
-        console.log('settingConfig', settingConfig)
         initCursor(settingConfig)
         setting.value = settingConfig
         watch(setting.value, (newVal, oldVal) => {
-            console.log('更新setting')
-            const raw = toRaw(setting.value)
-            window.electronAPI.setSettingConfig(raw)
-        })
+            window.electronAPI.setSettingConfig(toRaw(setting.value))
+        }, { immediate: true })
     }
     const savePath = computed(()=>{
         return {

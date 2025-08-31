@@ -1,7 +1,9 @@
 import ImageLocal from '../models/ImageLocal'
 export async function insertImageDB(data) {
+    const { smallSrc, imgSrc, size, savePath } = data
+    const dataToInsert = { smallSrc, imgSrc, size, savePath }
     try {
-        await ImageLocal.create(data);
+        await ImageLocal.create(dataToInsert);
     } catch (error) {
         Elog.error('Error saving to database:', error);
         return Promise.reject(error);
@@ -28,8 +30,6 @@ export async function deleteImageDB(id) {
         await ImageLocal.destroy({
             where: { id }
         });
-        const a = await ImageLocal.findAll()
-        console.log('All images after deletion:', a);
     } catch (error) {
         Elog.error('Error deleting image from database:', error);
         return Promise.reject(error);

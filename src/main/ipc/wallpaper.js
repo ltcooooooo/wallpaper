@@ -2,108 +2,131 @@ import { ipcMain, BrowserWindow } from "electron";
 import chokidar from 'chokidar';
 import axios from 'axios'
 import wallpaper from 'wallpaper'
-import sharp from 'sharp'
-import fs from 'fs'
+import fs from 'fs-extra'
 import { configStore } from '../store/index'
 import { extname, sep, join } from 'path'
-import { imageSizeFromFile } from 'image-size/fromFile'
-import debounce from "lodash.debounce";
 import { downloadFile } from "../utils/download";
-import { insertImageDB, findImageDB, deleteImageDB, getLocalImageListDB } from '../common/db'
+import { insertImageDB, findImageDB, deleteImageDB, getLocalImageListDB } from '../dal/repositories/imageLocal'
+import { insertVideoDB, findVideoDB, deleteVideoDB, getLocalVideoListDB } from '../dal/repositories/videoLocal'
+import { insertImageFavoriteDB, findImageFavoriteDB, deleteImageFavoriteDB, getImageFavoritesDB  } from '../dal/repositories/imageFavorite'
+
+// 下载壁纸
+async function downloadWallpaper(params, options) {
+    const { url, folderPath, findDB, deleteDB, insertDB } = options
+    let savePath;
+    try {
+        const data = await findDB(params)
+        if (data) {
+            const exists = fs.existsSync(data.savePath)
+            if (exists) {
+                return { success: true, message: '文件已存在', savePath: data.savePath, exists: true }
+            }
+            else {
+                await deleteDB(data.id)
+            }
+        }
+        // 文件名为时间戳加固定5位随机数
+        const timestamp = Date.now()
+        const randomNum = Math.floor(Math.random() * 100000)
+        const name = `${timestamp}-${randomNum}${extname(url)}`
+        savePath = join(folderPath, name)
+        await downloadFile(url, savePath)
+        await insertDB({...params, savePath})
+        return { success: true, message: '下载成功', savePath }
+    }
+    catch (err) {
+        fs.remove(savePath)
+        return { success: false, message: err.message }
+    }
+}
+
+//删除本地壁纸
+async function deleteWallpaper(params, options) {
+    const { deleteDB } = options
+    try {
+        await fs.remove(params.savePath)
+        await deleteDB(params.id)
+        return { success: true, message: "删除本地壁纸成功" }
+    }
+    catch (err) {
+        return { success: false, message: "删除本地壁纸失败" }
+    }
+}
 
 function registerWallpaperIpc() {
     ipcMain.handle('use-wallpaper', async (event, imagePath) => {
         try {
-            const setWallpaperReslut = await  wallpaper.set(imagePath, { screen: 'main' })
+            const setWallpaperReslut = await wallpaper.set(imagePath, { screen: 'main' })
             return Promise.resolve({ success: true, message: '设置壁纸成功' })
         }
         catch (err) {
             return Promise.resolve({ success: false, message: "设置壁纸失败" })
         }
     })
+    //下载
     ipcMain.handle('download-image', async (event, params) => {
-        return await downloadImage(params)
-    })
-    ipcMain.handle('del-local-wallpaper', async (event, path) => {
-        try {
-            const rmResult = fs.rmSync(path)
-            return Promise.resolve({ success: true, message: "删除本地壁纸成功" })
+        const options = {
+            url: params.imgSrc,
+            folderPath: params.imageSavePath,
+            findDB: findImageDB,
+            deleteDB: deleteImageDB,
+            insertDB: insertImageDB,
         }
-        catch (err) {
-            return Promise.resolve({ success: false, message: "删除本地壁纸失败" })
-        }
+        return await downloadWallpaper(params, options)
     })
+    ipcMain.handle('download-video', async (event, params) => {
+        const options = {
+            url: params.url,
+            folderPath: params.videoSavePath,
+            findDB: findVideoDB,
+            deleteDB: deleteVideoDB,
+            insertDB: insertVideoDB,
+        }
+        return await downloadWallpaper(params, options)
+    })
+    //删除
+    ipcMain.handle('del-local-image', async (event, params) => {
+        return deleteWallpaper(params, { deleteDB: deleteImageDB })
+    })
+    ipcMain.handle('del-local-video', async (event, params) => {
+        return deleteWallpaper(params, { deleteDB: deleteVideoDB })
+    })
+    //获取列表
     ipcMain.handle('get-local-image-List', async (event, params) => {
-       return await getLocalImageListDB(params)
+        return await getLocalImageListDB(params)
     })
-    ipcMain.handle('get-local-wallpaper', async (event, filePath) => {
-        try {
-            const imageSize = await imageSizeFromFile(filePath)
-            const imgBuffer = await imgToBuffer(filePath)
-            const { mtimeMs } = fs.statSync(filePath)
-            // console.log(filePath,fs.statSync(filePath))
-            const data = { imgBuffer, mtimeMs, imgSrc: filePath, size: `${imageSize.width}x${imageSize.height}` }
-            return Promise.resolve({ success: true, data})
-        } catch (err) {
-            return Promise.resolve({ success: false, message: err.message })
-        }
+    ipcMain.handle('get-local-video-List', async (event, params) => {
+        return await getLocalVideoListDB(params)
     })
-    async function downloadImage(params) {
-        try{
-            const image = await findImageDB(params)
-            if(image) {
-                const exists = fs.existsSync(image.savePath)
-                if(exists) {
-                    return { success: true, message: '文件已存在', savePath: image.savePath }
-                }
-                else {
-                    await deleteImageDB(image.id)
-                }
-            }
-            // 文件名为时间戳加固定5位随机数
-            const { imgSrc: url, downloadSavePath } = params
-            const timestamp = Date.now()
-            const randomNum = Math.floor(Math.random() * 100000)
-            const name = `${timestamp}-${randomNum}${extname(params.imgSrc)}`
-            const savePath = join(downloadSavePath, name)
-    
-            await downloadFile(url, savePath)
-            await insertImageDB({
-                ...params,
-                name,
-                savePath
-            })
-            return { success: true, message: '下载成功', savePath }
-            }
-            catch (err) {
-                return { success: false, message: err.message }
-            }
-    }
-    async function imgToBuffer(imgpath) {
-        const optimizedBuffer = await sharp(imgpath)
-            .resize(400) // 限制宽度400px，高度自动等比缩放
-            .jpeg({
-                quality: 60, // 适当降低质量
-                progressive: true, // 启用渐进式JPEG
-                mozjpeg: true // 启用更高效的JPEG编码
-            })
-            .toBuffer()
-        return optimizedBuffer
-    }
 
-    function getLocalWallpaper(path) {
+    //收藏
+    ipcMain.handle('add-image-favorite', async (event, params) => {
         try {
-            const validExtensions = ['.jpg', '.png', '.jpeg'];
-            const files = fs.readdirSync(path)
-            const imgArr = files.filter(file => validExtensions.includes(extname(file).toLowerCase()))
-            const images = imgArr.map(file => `${path}${sep}${file}`)
-            return Promise.resolve({ success: true, message: "获取本地壁纸成功", images })
+            const res =  await insertImageFavoriteDB(params)
+            return { success: true, message: '收藏成功' }
+        }catch (error) {
+            return { success: false, message: '收藏失败' }
         }
-        catch (err) {
-            console.log('获取本地壁纸失败',err)
-            return Promise.resolve({ success: false, message: "获取本地壁纸失败" })
+    })
+    ipcMain.handle('del-image-favorite', async (event, params) => {
+        try {
+            const res =  await deleteImageFavoriteDB(params)
+            return { success: true, message: '取消收藏成功' }
+        }catch (error) {
+            return { success: false, message: '取消收藏失败' }
         }
-    }
+    })
+    ipcMain.handle('get-image-favorite-status', async (event, params) => {
+        try {
+            const data = await findImageFavoriteDB(params)
+            return { success: true, data }
+        }catch (error) {
+            return { success: false, message: '取消收藏失败' }
+        }
+    })
+    ipcMain.handle('get-image-avorites', async (event, params) => {
+        return await getImageFavoritesDB(params)
+    })
 }
 
 export default registerWallpaperIpc

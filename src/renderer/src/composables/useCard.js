@@ -1,100 +1,141 @@
 import MyElMessage from '../common/MyElMessage'
 import { ref, computed, toRaw } from 'vue'
 import useSettingStore from '@renderer/store/setting'
-import useFavoritesStore from '@renderer/store/favorites'
+import { isUpdateImageLocal, isUpdateVideoLocal } from '@renderer/composables/useLocalList'
+import { isUpdateImageFavorites } from '@renderer/composables/useFavoriteList'
 
-export default ({data, emit, page}) => {
-    const { favoritesList, addFavoritesImage, delFavoritesImage } = useFavoritesStore()
-    const { setting, savePath } = useSettingStore()
+export default ({data, page}) => {
+    const { savePath } = useSettingStore()
     const isLoading = ref(false)
     const isDel = ref(false)
-    const isFavorite = computed(() => !!favoritesList.find(i => i.imgSrc === data.imgSrc))
-    console.log(page)
+    const isFavorite = ref(false)
+
+    // 卡片显示的封面图片链接
     const cardImageSrc = computed(() => {
-        console.log('page', page)
         if(page === 'image' || page === 'imageFavorites' || page === 'imageLocal'){
             return data.smallSrc
-        } else if(page === 'video') {
+        } else if(page === 'video' || page === 'videoLocal') {
             return data.cover
         }
     })
     const pageOptions = {
         image: {
-            downloadFn: window.electronAPI.downloadImage,
-            downloadSavePath: savePath.image
+            downloadFn: downloadImage,
+            useWallpaperFn: useImageWallpaper,
+            updateLocalMark: isUpdateImageLocal,
+            updateFavoriteMark: isUpdateImageFavorites,
+            addFavoritesFn: () => window.electronAPI.addImageFavorite(toRaw(data)),
+            delFavoritesFn: () => window.electronAPI.delImageFavorite(toRaw(data)),
+            getFavoriteStatusFn: () => window.electronAPI.getImageFavoriteStatus(toRaw(data)),
         },
         video: {
-            downloadFn: window.electronAPI.downloadWallpaper,
-            downloadSavePath: savePath.video
+            downloadFn: downloadVideo,
+            updateLocalMark: isUpdateVideoLocal
+        },
+        videoLocal: {
+            downloadFn: downloadVideo,
+            deleteApi: window.electronAPI.delLocalVideo,
+            updateLocalMark: isUpdateVideoLocal
         }
     }
+    pageOptions.imageLocal = { ...pageOptions.image, deleteApi: window.electronAPI.delLocalImage }
+    pageOptions.imageFavorites = { ...pageOptions.image, getFavoriteStatusFn: null }
+    // 获取初始收藏状态
+    pageOptions[page].getFavoriteStatusFn && pageOptions[page].getFavoriteStatusFn().then(res=>{
+        if(res.success && res.data) {
+            isFavorite.value = true
+        }
+    })
+    // 下载壁纸
     async function downloadWallpaper() {
         isLoading.value = true
-        const downloadFn = pageOptions[page].downloadFn
-        const downloadSavePath = pageOptions[page].downloadSavePath
-        const downloadResult = await downloadFn({
-            ...data,
-            downloadSavePath
-        })
+        const res = await pageOptions[page].downloadFn()
         isLoading.value = false
         MyElMessage({
-            message: downloadResult.message,
-            type: downloadResult.success ? 'success' : 'error',
+            message: res.message,
+            type: res.success ? 'success' : 'error',
         })
+        return res
     }
+    // 下载图片壁纸
+    async function downloadImage() {
+        const res = await window.electronAPI.downloadImage({...data, imageSavePath: savePath.image})
+        page !== 'imageLocal' && res.success && !res.exists && (pageOptions[page].updateLocalMark.value = true)
+        return res
+    }
+    // 下载视频壁纸
+    async function downloadVideo() {
+        const res = await window.electronAPI.downloadVideo({...data, videoSavePath: savePath.video})
+        page !== 'videoLocal' && res.success && !res.exists && (pageOptions[page].updateLocalMark.value = true)
+        return res
+    }
+    // 设置为壁纸
     async function setWallpaper() {
-        const isLocalPage = page ==='imageLocal'
-        console.log('isLocalPage', isLocalPage)
         isLoading.value = true
-        let downloadResult
-        if (!isLocalPage) {
-            const downloadFn = pageOptions[page].downloadFn
-            const downloadSavePath = pageOptions[page].downloadSavePath
-            downloadResult = await downloadFn({
-                ...data,
-                downloadSavePath
+        const res = await pageOptions[page].downloadFn()
+        if (!res.success) {
+            MyElMessage({
+                message: res.message,
+                type: 'error',
             })
-            if (!downloadResult.success) {
-                console.log('downloadResult', downloadResult.success)
-                MyElMessage({
-                    message: downloadResult.message,
-                    type: 'error',
-                })
-                isLoading.value = false
-                return
-            }
+            isLoading.value = false
+            return
         }
-        const useResult = await window.electronAPI.useWallpaper(isLocalPage ? data.savePath : downloadResult.savePath)
+
+        await pageOptions[page].useWallpaperFn(res.savePath)
         isLoading.value = false
+    }
+    // 设置图片壁纸
+    async function useImageWallpaper(imagePath) {
+        const useResult = await window.electronAPI.useWallpaper(imagePath)
         MyElMessage({
             message: useResult.message,
             type: useResult.success ? 'success' : 'error',
         })
-
     }
-
     async function delLocalWallpaper() {
-        console.log('image.imgSrc', data.imgSrc)
-        const delResult = await window.electronAPI.delLocalWallpaper(data.imgSrc)
+        if(isDel.value) return
+        const delResult = await pageOptions[page].deleteApi(toRaw(data))
         if(delResult.success) {
             isDel.value = true
+            setTimeout(() => pageOptions[page].updateLocalMark.value = true, 400);
         }
         MyElMessage({
             message: delResult.message,
             type: delResult.success ? 'success' : 'error',
         })
     }
+    
+    let allowClick = true
+    async function changeFavoritesStatus() {
+        if(!allowClick) return
+        allowClick = false
 
-    function addFavorites() {
-        addFavoritesImage(data)
-    }
-    function delFavorites() {
-        if (page === 'imageFavorites') {
-            isDel.value = true
-            setTimeout(() => delFavoritesImage(data), 400);
+        let res;
+        if (isFavorite.value) {
+            res = await pageOptions[page].delFavoritesFn()
         } else {
-            delFavoritesImage(data)
+            res = await pageOptions[page].addFavoritesFn()
         }
+        if(!res.success) {
+            return MyElMessage({ message: res.message, type: 'error' })
+        }
+        pageOptions[page].updateFavoriteMark.value = true
+        allowClick = true
+        isFavorite.value = !isFavorite.value
     }
-    return { isLoading, isFavorite, isDel, cardImageSrc, downloadWallpaper, setWallpaper, delLocalWallpaper, addFavorites, delFavorites }
+
+    async function delFavoritesImage() {
+        if(!allowClick) return
+        allowClick = false
+
+        const res = await pageOptions[page].delFavoritesFn()
+        if(!res.success) {
+            return MyElMessage({ message: res.message, type: 'error' })
+        }
+        isDel.value = true
+        setTimeout(() => pageOptions[page].updateFavoriteMark.value = true, 400);
+    }
+
+    return { isLoading, isFavorite, isDel, cardImageSrc, pageOptions, downloadWallpaper, setWallpaper, delLocalWallpaper, changeFavoritesStatus, delFavoritesImage }
 }

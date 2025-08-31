@@ -9,24 +9,32 @@ const api = {
   setSavePath: (path) => ipcRenderer.invoke('set-save-path', path),
 
   // 收藏数据
-  getFavoritesList: () => ipcRenderer.invoke('get-favorites-list'),
-  setFavoritesList: (value) => ipcRenderer.send('set-favorites-list', value),
+  // getFavoritesList: () => ipcRenderer.invoke('get-favorites-list'),
+  addImageFavorite: (params) => ipcRenderer.invoke('add-image-favorite', params),
+  delImageFavorite: (params) => ipcRenderer.invoke('del-image-favorite', params),
+  getImageFavoriteStatus: (params) => ipcRenderer.invoke('get-image-favorite-status', params),
+  getImageFavorites: (params) => ipcRenderer.invoke('get-image-avorites', params),
+
+  // isFavorite: (params) => ipcRenderer.invoke('is-favorite', params),
+
   // 获取本地图片列表
   getLocalImageList: (params) => ipcRenderer.invoke('get-local-image-List', params),
-  // 本地壁纸有变动
-  localWallpaperChanged: (callback) => ipcRenderer.on("local-wallpaper-changed", (_, value) => callback(value)),
-  // 获取本地壁纸
-  getLocalWallpaper: (path) => ipcRenderer.invoke('get-local-wallpaper', path),
-  // 删除本地壁纸
-  delLocalWallpaper: ( wallpaperPath) => ipcRenderer.invoke('del-local-wallpaper', wallpaperPath),
+  // 获取本地视频壁纸
+  getLocalVideoList: (params) => ipcRenderer.invoke('get-local-video-List', params),
+  // 删除本地图片
+  delLocalImage: (params) => ipcRenderer.invoke('del-local-image', params),
+  // 删除本地视频
+  delLocalVideo: (params) => ipcRenderer.invoke('del-local-video', params),
 
   // 打开指定路径
   openfilePath: (path) => {shell.openPath(path)},
 
   // 设置为壁纸
   useWallpaper: ( wallpaperPath) => ipcRenderer.invoke('use-wallpaper', wallpaperPath),
-  // 下载壁纸
+  // 下载图片壁纸
   downloadImage: (params) => ipcRenderer.invoke('download-image', params),
+  // 下载视频壁纸
+  downloadVideo: (params) => ipcRenderer.invoke('download-video', params),
 
   // 打开光标效果
   openCursor: (allDisplays) => ipcRenderer.send("open-cursor", allDisplays),

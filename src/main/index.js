@@ -1,8 +1,8 @@
 import { app, BrowserWindow, Menu } from 'electron'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 
-import sequelize from './models/db'
-import syncDb from './models/sync'
+import sequelize from './dal/models/db'
+import syncDb from './dal/models/sync'
 
 //防止启动多个应用实例
 const additionalData = { myKey: 'liangtianci.wallpaper' }

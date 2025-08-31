@@ -2,7 +2,7 @@
   <div class="h-full flex flex-col">
     <wallpaper-search :init="init" />
     <section class="flex-1 w-full min-h-0">
-      <list :loadMore="loadMore">
+      <list :loadMore="loadMore" :data="wallpaperList">
         <div
           class="w-75 h-50 rounded-md overflow-hidden shadow-xl transition-all hover:shadow-2xl hover:translate-y-[-2px]"
           v-for="item in wallpaperList"
@@ -14,10 +14,10 @@
               <div class="text-white">{{ item.size }}</div>
               <div class="text-white">
                   <my-tooltip v-if="!CD.isFavorite" content="收藏">
-                      <el-button type="warning" size="small" @click="CD.addFavorites"><i-ms-kid-star-outline /></el-button>
+                      <el-button type="warning" size="small" @click="CD.changeFavoritesStatus"><i-ms-kid-star-outline /></el-button>
                   </my-tooltip>
                   <my-tooltip v-if="CD.isFavorite" content="取消收藏">
-                      <el-button type="warning" size="small" @click="CD.delFavorites"><i-ms-kid-star /></el-button>
+                      <el-button type="warning" size="small" @click="CD.changeFavoritesStatus"><i-ms-kid-star /></el-button>
                   </my-tooltip>
                   <my-tooltip content="下载">
                       <el-button type="success" size="small" @click="CD.downloadWallpaper" :loading="CD.isLoading"><i-ms-download-rounded v-show="!CD.isLoading" /></el-button>
