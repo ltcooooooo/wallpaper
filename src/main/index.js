@@ -1,13 +1,13 @@
 import { app, BrowserWindow, Menu } from 'electron'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 
-import sequelize from './dal/models/db'
-import syncDb from './dal/models/sync'
-
 //防止启动多个应用实例
 const additionalData = { myKey: 'liangtianci.wallpaper' }
 const gotTheLock = app.requestSingleInstanceLock(additionalData)
 gotTheLock || app.quit()
+
+import sequelize from './dal/models/db'
+import syncDb from './dal/models/sync'
 
 import { createMainWindow } from './common/window'
 
@@ -20,19 +20,9 @@ console.log('appData', app.getPath('appData'))
 // macos去掉默认顶部菜单栏
 Menu.setApplicationMenu(null)
 
-let mainWindow
 app.whenReady().then(() => {
+
   electronApp.setAppUserModelId('run.tianci.wallpaper')
-
-  app.on('browser-window-created', (_, window) => {
-    optimizer.watchWindowShortcuts(window)
-  })
-
-  app.on('activate', function () {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      mainWindow = createMainWindow()
-    }
-  })
 
   // 日志模块
   globalMountElog()
@@ -47,9 +37,19 @@ app.whenReady().then(() => {
   // 注册Ipc模块
   registerIpc()
   
-  // 创建主窗口
-  mainWindow = createMainWindow()
+  // 创建主窗口,创建系统托盘
+  let mainWindow = createMainWindow()
   createTray(mainWindow)
+
+  app.on('browser-window-created', (_, window) => {
+    optimizer.watchWindowShortcuts(window)
+  })
+
+  app.on('activate', function () {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      mainWindow = createMainWindow()
+    }
+  })
 })
 
 app.on('window-all-closed', () => {

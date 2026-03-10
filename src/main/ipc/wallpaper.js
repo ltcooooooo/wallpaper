@@ -1,5 +1,5 @@
 import { ipcMain, BrowserWindow } from "electron";
-import chokidar from 'chokidar';
+// import chokidar from 'chokidar';
 import axios from 'axios'
 import wallpaper from 'wallpaper'
 import fs from 'fs-extra'
@@ -9,6 +9,7 @@ import { downloadFile } from "../utils/download";
 import { insertImageDB, findImageDB, deleteImageDB, getLocalImageListDB } from '../dal/repositories/imageLocal'
 import { insertVideoDB, findVideoDB, deleteVideoDB, getLocalVideoListDB } from '../dal/repositories/videoLocal'
 import { insertImageFavoriteDB, findImageFavoriteDB, deleteImageFavoriteDB, getImageFavoritesDB  } from '../dal/repositories/imageFavorite'
+import { insertVideoFavoriteDB, findVideoFavoriteDB, deleteVideoFavoriteDB, getVideoFavoritesDB  } from '../dal/repositories/videoFavorite'
 
 // 下载壁纸
 async function downloadWallpaper(params, options) {
@@ -121,11 +122,39 @@ function registerWallpaperIpc() {
             const data = await findImageFavoriteDB(params)
             return { success: true, data }
         }catch (error) {
-            return { success: false, message: '取消收藏失败' }
+            return { success: false, message: '获取收藏状态失败' }
         }
     })
     ipcMain.handle('get-image-avorites', async (event, params) => {
         return await getImageFavoritesDB(params)
+    })
+
+    ipcMain.handle('add-video-favorite', async (event, params) => {
+        try {
+            const res =  await insertVideoFavoriteDB(params)
+            return { success: true, message: '收藏成功' }
+        }catch (error) {
+            return { success: false, message: '收藏失败' }
+        }
+    })
+    ipcMain.handle('del-video-favorite', async (event, params) => {
+        try {
+            const res =  await deleteVideoFavoriteDB(params)
+            return { success: true, message: '取消收藏成功' }
+        }catch (error) {
+            return { success: false, message: '取消收藏失败' }
+        }
+    })
+    ipcMain.handle('get-video-favorite-status', async (event, params) => {
+        try {
+            const data = await findVideoFavoriteDB(params)
+            return { success: true, data }
+        }catch (error) {
+            return { success: false, message: '获取收藏状态失败' }
+        }
+    })
+    ipcMain.handle('get-video-favorites', async (event, params) => {
+        return await getVideoFavoritesDB(params)
     })
 }
 

@@ -8,6 +8,7 @@ const path = join(app.getPath('userData'), 'database.db');
 const sequelize = new Sequelize({
     dialect: 'sqlite',
     storage: path,
+    // logging: null
     logging: is.dev ? console.log : null
 });
 

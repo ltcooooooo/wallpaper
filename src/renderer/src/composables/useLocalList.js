@@ -31,7 +31,7 @@ export function useVideoList({ listRef }) {
   const { list: videoList, ...rest } = useBaseList({
     listRef,
     fetchData: window.electronAPI.getLocalVideoList,
-    updateListFlag: isUpdateImageLocal
+    updateListFlag: isUpdateVideoLocal
   })
   watch(isUpdateVideoLocal, (change) => {
     if (change) {

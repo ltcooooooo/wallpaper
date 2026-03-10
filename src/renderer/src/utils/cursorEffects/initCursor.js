@@ -91,7 +91,7 @@ const initData = {
 const initCursor = (setting) => {
     !setting.cursor && (setting.cursor= {})
     const cursor = setting.cursor
-    //初始化数据,如果本地中灭有这个key就直接赋值为默认值
+    //初始化数据,如果本地中没有这个key就直接赋值为默认值
     for (const key in initData) {
         console.log('key', key,  cursor[key])
         !cursor.hasOwnProperty(key) && (cursor[key] = initData[key])

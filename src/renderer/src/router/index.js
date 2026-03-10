@@ -1,10 +1,8 @@
 import { createWebHashHistory, createRouter } from 'vue-router'
 
-import Home from '../views/Home.vue'
-
 const routes = [
   {
-    path: '/', component: Home,
+    path: '/', component: () => import('../views/Home.vue'),
     name: 'home'
   },
   {
@@ -26,6 +24,10 @@ const routes = [
   {
     path: '/cursorWindow', component: () => import('../windowPage/cursorWindow.vue'),
     name: 'cursorWindow',
+  },
+  {
+    path: '/liveWindow', component: () => import('../windowPage/liveWindow.vue'),
+    name: 'liveWindow',
   }
 ]
 

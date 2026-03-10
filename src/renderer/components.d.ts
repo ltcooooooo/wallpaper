@@ -28,6 +28,7 @@ declare module 'vue' {
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     EmojiPicker: typeof import('./src/components/emojiPicker/emojiPicker.vue')['default']
     FavoriteImage: typeof import('./src/components/FavoriteImage.vue')['default']
+    FavoriteVideo: typeof import('./src/components/FavoriteVideo.vue')['default']
     IEpArrowRight: typeof import('~icons/ep/arrow-right')['default']
     IEpArrowRightBold: typeof import('~icons/ep/arrow-right-bold')['default']
     IEpClose: typeof import('~icons/ep/close')['default']

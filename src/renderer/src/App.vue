@@ -14,7 +14,7 @@
 import { useRoute } from 'vue-router';
 import useIpc from  '@renderer/composables/useIpc';
 const route = useRoute();
-const isCursorWindow = (/\/cursorWindow$/.test(location.hash));
+const isCursorWindow = (/\/cursorWindow|liveWindow$/.test(location.hash));
 const showTitle = !isCursorWindow;
 useIpc()
 

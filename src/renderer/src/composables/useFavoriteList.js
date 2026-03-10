@@ -2,12 +2,11 @@ import { ref, watch } from 'vue'
 import { useBaseList } from './useBaseList'
 
 const isUpdateImageFavorites = ref(false)
-
-// const isUpdateVideoLocal = ref(false)
+const isUpdateVideoFavorites = ref(false)
 
 export {
     isUpdateImageFavorites,
-//   isUpdateVideoLocal
+    isUpdateVideoFavorites
 }
 
 export function useImageList({ listRef }) {
@@ -29,19 +28,19 @@ export function useImageList({ listRef }) {
 }
 
 export function useVideoList({ listRef }) {
-  const { list: videoList, ...rest } = useBaseList({
+  const { list: favoritesList, ...rest } = useBaseList({
     listRef,
-    fetchData: window.electronAPI.getLocalVideoList,
-    updateListFlag: isUpdateImageLocal
+    fetchData: window.electronAPI.getVideoFavorites,
+    updateListFlag: isUpdateVideoFavorites
   })
-  watch(isUpdateVideoLocal, (change) => {
+  watch(isUpdateVideoFavorites, (change) => {
     if (change) {
       rest.updateList()
     }
   })
 
   return {
-    videoList,
+    favoritesList,
     ...rest
   }
 }

@@ -6,14 +6,19 @@ const api = {
   getSettingConfig: () => ipcRenderer.invoke('get-setting-config'),
   setSettingConfig: (value) => ipcRenderer.send('set-setting-config', value),
   // 设置保存地址
-  setSavePath: (path) => ipcRenderer.invoke('set-save-path', path),
+  // setSavePath: (path) => ipcRenderer.invoke('set-save-path', path),
 
-  // 收藏数据
+  // 收藏数据 图片
   // getFavoritesList: () => ipcRenderer.invoke('get-favorites-list'),
   addImageFavorite: (params) => ipcRenderer.invoke('add-image-favorite', params),
   delImageFavorite: (params) => ipcRenderer.invoke('del-image-favorite', params),
   getImageFavoriteStatus: (params) => ipcRenderer.invoke('get-image-favorite-status', params),
   getImageFavorites: (params) => ipcRenderer.invoke('get-image-avorites', params),
+  // 收藏数据 视频
+  addVideoFavorite: (params) => ipcRenderer.invoke('add-video-favorite', params),
+  delVideoFavorite: (params) => ipcRenderer.invoke('del-video-favorite', params),
+  getVideoFavoriteStatus: (params) => ipcRenderer.invoke('get-video-favorite-status', params),
+  getVideoFavorites: (params) => ipcRenderer.invoke('get-video-favorites', params),
 
   // isFavorite: (params) => ipcRenderer.invoke('is-favorite', params),
 
@@ -31,6 +36,8 @@ const api = {
 
   // 设置为壁纸
   useWallpaper: ( wallpaperPath) => ipcRenderer.invoke('use-wallpaper', wallpaperPath),
+  // 设置当前视频壁纸的视频路径
+  setVideoWallpaperPath: (videoPath) => ipcRenderer.invoke('set-video-wallpaper-path', videoPath),
   // 下载图片壁纸
   downloadImage: (params) => ipcRenderer.invoke('download-image', params),
   // 下载视频壁纸
@@ -40,6 +47,11 @@ const api = {
   openCursor: (allDisplays) => ipcRenderer.send("open-cursor", allDisplays),
   // 关闭光标效果
   closeCursor: () => ipcRenderer.send("close-cursor"),
+
+  // 动态壁纸开关
+  liveWallpaperStatus: (flag) => ipcRenderer.send('live-wallpaper-status', flag),
+  // 更新动态壁纸窗口内视频路径
+  updateLivePath: (callback) => ipcRenderer.on('update-video-path', (_, videoPath) => callback(videoPath)),
 
   // 发现新版本
   findUpdater: (callback) => ipcRenderer.on("update-available", (_, value) => callback(value)),

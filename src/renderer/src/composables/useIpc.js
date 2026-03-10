@@ -11,6 +11,10 @@ export default function useIpc() {
                 break
             case '光标效果':
                 setting.cursor.open = status
+                break
+            case '动态壁纸':
+                setting.liveWallpaper = status
+                break
         }
     })
 }

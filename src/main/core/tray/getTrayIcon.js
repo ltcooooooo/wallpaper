@@ -6,6 +6,8 @@ import autoStartOffIco from '../../../../resources/tray/autoStartOff.png?asset'
 import autoStartOnIco from '../../../../resources/tray/autoStartOn.png?asset'
 import cursorOffIco from '../../../../resources/tray/cursorOff.png?asset'
 import cursorOnIco from '../../../../resources/tray/cursorOn.png?asset'
+import liveOffIco from '../../../../resources/tray/liveOff.png?asset'
+import liveOnIco from '../../../../resources/tray/liveOn.png?asset'
 import quitIco from '../../../../resources/tray/quit.png?asset'
 import openWinIco from '../../../../resources/tray/openWin.png?asset'
 
@@ -15,6 +17,8 @@ const autoStartOn = nativeImage.createFromPath(autoStartOnIco).resize({ width: 1
 const autoStartOff = nativeImage.createFromPath(autoStartOffIco).resize({ width: 16, height: 16 })
 const cursorOn = nativeImage.createFromPath(cursorOnIco).resize({ width: 16, height: 16 })
 const cursorOff = nativeImage.createFromPath(cursorOffIco).resize({ width: 16, height: 16 })
+const liveOn = nativeImage.createFromPath(liveOnIco).resize({ width: 16, height: 16 })
+const liveOff = nativeImage.createFromPath(liveOffIco).resize({ width: 16, height: 16 })
 const quit = nativeImage.createFromPath(quitIco).resize({ width: 16, height: 16 })
 const trayIconMac = nativeImage.createFromPath(trayIconImage).resize({ width: 16, height: 16 })
 const openWin = nativeImage.createFromPath(openWinIco).resize({ width: 16, height: 16 })
@@ -28,6 +32,8 @@ export {
     autoStartOn,
     cursorOn,
     cursorOff,
+    liveOn,
+    liveOff,
     quit,
     openWin
 }

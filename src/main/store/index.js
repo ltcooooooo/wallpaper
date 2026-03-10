@@ -10,6 +10,8 @@ fs.ensureDirSync(join(dataPath, 'videos'))
 const defaultSettings = {
     dataPath,
     autoStart: false,
+    liveWallpaper: false,
+    livePath: '',
     cursor: {
         open: false
     }
@@ -17,11 +19,6 @@ const defaultSettings = {
 const configStore = new Store({ name: 'config' })
 configStore.has('settings') || configStore.set('settings', defaultSettings)
 const setting = configStore.get('settings')
-if (setting.wallpaperSavePath) {
-    setting.dataPath = dataPath
-    delete setting.wallpaperSavePath
-    configStore.set('settings', setting)
-}
 
 const dbStore = new Store({ name: 'db' })
 dbStore.has('favorites') || dbStore.set('favorites',[])

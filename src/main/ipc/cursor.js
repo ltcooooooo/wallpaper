@@ -1,12 +1,12 @@
 import { ipcMain } from "electron";
-import { createCursorWindow, destroyCursorWindow } from '../common/window'
+import { setCursorWindows, unsetCursorWindows } from '../common/window'
 
 function registerCursorIpc() {
     ipcMain.on('open-cursor', (event, allDisplays) => {
-        createCursorWindow(allDisplays)
+        setCursorWindows(allDisplays)
     })
     ipcMain.on('close-cursor', (event) => {
-        destroyCursorWindow()
+        unsetCursorWindows()
     })
 }
 

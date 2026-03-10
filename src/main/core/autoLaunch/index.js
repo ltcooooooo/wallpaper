@@ -6,8 +6,8 @@ const launcher = new autoLaunch({
 })
 
 async function setAutoLaunch (isAutoLaunch) {
-    const tupe = isAutoLaunch ? 'enable' : 'disable'
-    const result = await launcher[tupe]()
+    const type = isAutoLaunch ? 'enable' : 'disable'
+    const result = await launcher[type]()
     return result
 }
 export { setAutoLaunch }

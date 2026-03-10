@@ -18,7 +18,13 @@
                     ><i-ms-delete-outline-rounded
                   /></el-button>
                 </my-tooltip>
-                <!-- <my-tooltip content="设为壁纸">
+                <my-tooltip v-if="!CD.isFavorite" content="收藏">
+                    <el-button type="warning" size="small" @click="CD.changeFavoritesStatus"><i-ms-kid-star-outline /></el-button>
+                </my-tooltip>
+                <my-tooltip v-if="CD.isFavorite" content="取消收藏">
+                    <el-button type="warning" size="small" @click="CD.changeFavoritesStatus"><i-ms-kid-star /></el-button>
+                </my-tooltip>
+                <my-tooltip content="设为壁纸">
                   <el-button
                     type="primary"
                     size="small"
@@ -26,7 +32,7 @@
                     :loading="CD.isLoading"
                     ><i-ms-desktop-mac v-show="!CD.isLoading"
                   /></el-button>
-                </my-tooltip> -->
+                </my-tooltip>
               </div>
             </section>
           </Card>

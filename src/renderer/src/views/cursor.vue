@@ -258,7 +258,6 @@ const staticOptions = {
   },
 };
 
-
 function openCursor(isOpen) {
     if (isOpen) {
         const allDisplays = ['fairyDust', 'emoji', 'bubble', 'snowflake', 'character'].includes(cursor.current)

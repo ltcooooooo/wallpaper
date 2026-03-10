@@ -2,10 +2,10 @@ import MyElMessage from '../common/MyElMessage'
 import { ref, computed, toRaw } from 'vue'
 import useSettingStore from '@renderer/store/setting'
 import { isUpdateImageLocal, isUpdateVideoLocal } from '@renderer/composables/useLocalList'
-import { isUpdateImageFavorites } from '@renderer/composables/useFavoriteList'
+import { isUpdateImageFavorites, isUpdateVideoFavorites } from '@renderer/composables/useFavoriteList'
 
 export default ({data, page}) => {
-    const { savePath } = useSettingStore()
+    const { savePath, setting } = useSettingStore()
     const isLoading = ref(false)
     const isDel = ref(false)
     const isFavorite = ref(false)
@@ -14,7 +14,7 @@ export default ({data, page}) => {
     const cardImageSrc = computed(() => {
         if(page === 'image' || page === 'imageFavorites' || page === 'imageLocal'){
             return data.smallSrc
-        } else if(page === 'video' || page === 'videoLocal') {
+        } else if(page === 'video' || page === 'videoFavorites' || page === 'videoLocal') {
             return data.cover
         }
     })
@@ -30,16 +30,18 @@ export default ({data, page}) => {
         },
         video: {
             downloadFn: downloadVideo,
-            updateLocalMark: isUpdateVideoLocal
+            useWallpaperFn: useVideoWallpaper,
+            updateLocalMark: isUpdateVideoLocal,
+            updateFavoriteMark: isUpdateVideoFavorites,
+            addFavoritesFn: () => window.electronAPI.addVideoFavorite(toRaw(data)),
+            delFavoritesFn: () => window.electronAPI.delVideoFavorite(toRaw(data)),
+            getFavoriteStatusFn: () => window.electronAPI.getVideoFavoriteStatus(toRaw(data)),
         },
-        videoLocal: {
-            downloadFn: downloadVideo,
-            deleteApi: window.electronAPI.delLocalVideo,
-            updateLocalMark: isUpdateVideoLocal
-        }
     }
     pageOptions.imageLocal = { ...pageOptions.image, deleteApi: window.electronAPI.delLocalImage }
     pageOptions.imageFavorites = { ...pageOptions.image, getFavoriteStatusFn: null }
+    pageOptions.videoLocal = { ...pageOptions.video, deleteApi: window.electronAPI.delLocalVideo }
+    pageOptions.videoFavorites = { ...pageOptions.video, getFavoriteStatusFn: null }
     // 获取初始收藏状态
     pageOptions[page].getFavoriteStatusFn && pageOptions[page].getFavoriteStatusFn().then(res=>{
         if(res.success && res.data) {
@@ -93,6 +95,24 @@ export default ({data, page}) => {
             type: useResult.success ? 'success' : 'error',
         })
     }
+    // 设置视频壁纸
+    async function useVideoWallpaper(videoPath) {
+        const useResult = await window.electronAPI.setVideoWallpaperPath(videoPath)
+        MyElMessage({
+            message: useResult.message,
+            type: useResult.success ? 'success' : 'error',
+        })
+        if(useResult.success) {
+            setting.livePath = videoPath
+            //动态壁纸未开启时设置动态壁纸，创建窗口后渲染进程更新开启状态
+            if (useResult.openLive) {
+                setting.liveWallpaper = true
+                window.electronAPI.changeTrayStatus({name: '动态壁纸', status: setting.liveWallpaper})
+            }
+        }
+    }
+    
+
     async function delLocalWallpaper() {
         if(isDel.value) return
         const delResult = await pageOptions[page].deleteApi(toRaw(data))
@@ -110,7 +130,6 @@ export default ({data, page}) => {
     async function changeFavoritesStatus() {
         if(!allowClick) return
         allowClick = false
-
         let res;
         if (isFavorite.value) {
             res = await pageOptions[page].delFavoritesFn()

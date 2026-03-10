@@ -5,33 +5,80 @@ import { set } from "wallpaper";
 
 import icon from '../../../resources/icon.png?asset'
 
-import openCursor from './openCursor'
+import { openCursor, openLive } from './startOpenWin'
 
 import registerUpdateService from '../core/update'
 
-let cursorWindow = [];
-function createCursorWindow(allDisplays) {
+function createMainWindow() {
+  const mainWindow = new BrowserWindow({
+    width: 970,
+    height: 716,
+    minHeight: 500,
+    minWidth: 650,
+    maxWidth: 1280,
+    show: false,
+    autoHideMenuBar: true,
+    skipTaskbar: true,
+    frame: false,
+    transparent: true,
+    minimizable: false,
+    maximizable: false,
+    ...(process.platform === 'linux' ? { icon } : {}),
+    webPreferences: {
+      preload: join(__dirname, '../preload/index.js'),
+      sandbox: false,
+      spellcheck:false,
+      webSecurity: import.meta.env.PROD == true
+    }
+  })
+  import.meta.env.PROD == false && mainWindow.openDevTools()
+//   mainWindow.openDevTools()
+
+  mainWindow.on('ready-to-show', () => {
+    mainWindow.show()
+    // 全量更新模块
+    const autoUpdater = registerUpdateService(mainWindow)
+    is.dev || autoUpdater.checkForUpdates()
+    openCursor()
+    openLive()
+  })
+
+  mainWindow.webContents.setWindowOpenHandler((details) => {
+    shell.openExternal(details.url)
+    return { action: 'deny' }
+  })
+  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+  } else {
+    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+  }
+  return mainWindow
+}
+
+let cursorWindows = [];
+function setCursorWindows(allDisplays) {
     // 创建多屏窗口
     if(allDisplays){
         const screenAll = screen.getAllDisplays();
         for (const display of screenAll) {
             const bounds = display.bounds;
-            cursorWindow.push(createWindow(bounds));
+            cursorWindows.push(cursorWinInstance(bounds));
         }
     } else {
         // 单屏窗口
         const bounds = screen.getPrimaryDisplay().bounds
-        cursorWindow.push(createWindow(bounds));
+        cursorWindows.push(cursorWinInstance(bounds));
     }
 }
 
-function destroyCursorWindow() {
-    for (const cursor of cursorWindow) {
+function unsetCursorWindows() {
+    for (const cursor of cursorWindows) {
         cursor.destroy();
     }
+    cursorWindows.length = 0;
 }
 
-function createWindow(bounds) {
+function cursorWinInstance(bounds) {
     const cursorWindow = new BrowserWindow({
         transparent: true,
         show: false,
@@ -49,7 +96,7 @@ function createWindow(bounds) {
             preload: join(__dirname, '../preload/index.js'),
             sandbox: false,
             spellcheck: false,
-            partition: 'persist:cursorWindow', // 多屏窗口使用同一个session
+            // partition: 'persist:cursorWindow', // 多屏窗口使用同一个session
             webSecurity: import.meta.env.PROD == true
         }
     })
@@ -72,48 +119,50 @@ function createWindow(bounds) {
     return cursorWindow
 }
 
-function createMainWindow() {
-  const mainWindow = new BrowserWindow({
-    width: 970,
-    height: 716,
-    minHeight: 500,
-    minWidth: 650,
-    maxWidth: 1280,
-    show: false,
-    autoHideMenuBar: true,
-    frame: false,
-    transparent: true,
-    minimizable: false,
-    maximizable: false,
-    ...(process.platform === 'linux' ? { icon } : {}),
-    webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
-      sandbox: false,
-      spellcheck:false,
-      webSecurity: import.meta.env.PROD == true
+
+export let liveWindows = [];
+function setLiveWindows() {
+    // 创建多屏窗口
+    const screenAll = screen.getAllDisplays();
+    for (const display of screenAll) {
+        const bounds = display.bounds;
+        liveWindows.push(liveWinInstance(bounds));
     }
-  })
-  import.meta.env.PROD == false && mainWindow.openDevTools()
-//   mainWindow.openDevTools()
-
-  mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
-    // 全量更新模块
-    const autoUpdater = registerUpdateService(mainWindow)
-    is.dev || autoUpdater.checkForUpdates()
-    openCursor()
-  })
-
-  mainWindow.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url)
-    return { action: 'deny' }
-  })
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
-  } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
-  }
-  return mainWindow
 }
 
-export { createCursorWindow, destroyCursorWindow, createMainWindow }
+function unsetLiveWindows() {
+    for (const live of liveWindows) {
+        live.destroy();
+    }
+    liveWindows.length = 0;
+}
+
+function liveWinInstance(bounds) {
+  const liveWindow = new BrowserWindow({
+      transparent: true,
+      show: false,
+      frame: false,
+      roundedCorners: false,
+      focusable: false,
+      type: 'desktop',
+      webPreferences: {
+          preload: join(__dirname, '../preload/index.js'),
+          sandbox: false,
+          spellcheck: false,
+          webSecurity: import.meta.env.PROD == true
+      }
+  })
+  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+        liveWindow.loadURL(process.env['ELECTRON_RENDERER_URL'] + '#/liveWindow')
+    } else {
+        liveWindow.loadFile(join(__dirname, '../renderer/index.html'), {hash: '#/liveWindow'})
+    }
+    liveWindow.on('ready-to-show', () => {
+        liveWindow.show()
+    })
+    // liveWindow.openDevTools()
+    liveWindow.setBounds(bounds)
+    return liveWindow
+}
+
+export { setCursorWindows, unsetCursorWindows, setLiveWindows, unsetLiveWindows, createMainWindow }

@@ -1,11 +1,11 @@
 import { Tray, Menu, ipcMain } from 'electron'
-import { trayIcon, autoStartOff, autoStartOn, cursorOn, cursorOff, quit, openWin } from './getTrayIcon.js'
+import { trayIcon, autoStartOff, autoStartOn, cursorOn, cursorOff, liveOn, liveOff, quit, openWin } from './getTrayIcon.js'
 import { configStore } from '../../store'
-import { createCursorWindow, destroyCursorWindow } from '../../common/window'
+import { setCursorWindows, unsetCursorWindows, setLiveWindows, unsetLiveWindows } from '../../common/window'
 
 import { setAutoLaunch } from '../autoLaunch'
 
-const { autoStart, cursor } = configStore.get('settings')
+const { autoStart, cursor, liveWallpaper } = configStore.get('settings')
 
 let mainWin = null
 
@@ -15,7 +15,10 @@ const contextMenu = Menu.buildFromTemplate([
     { id: 3, sort: 1, label: '退出', role: 'quit', icon: quit },
     { id: 4, sort: 4, label: '光标效果', status: true, visible: cursor.open, icon: cursorOn, click: trayItemStatusChange },
     { id: 5, sort: 5, label: '光标效果', status: false, visible: !cursor.open, icon: cursorOff, click: trayItemStatusChange },
-    { id: 6, sort: 6, label: '打开主窗口', icon: openWin, click: () => mainWin.show() },
+    { id: 6, sort: 8, label: '打开主窗口', icon: openWin, click: () => mainWin.show() },
+    { id: 7, sort: 6, label: '动态壁纸', status: true, visible: liveWallpaper, icon: liveOn, click: trayItemStatusChange },
+    { id: 8, sort: 7, label: '动态壁纸', status: false, visible: !liveWallpaper, icon: liveOff, click: trayItemStatusChange },
+    
 ].sort((a, b) => b.sort - a.sort))
 
 ipcMain.on('change-tray-status', (_, params) => {
@@ -28,6 +31,7 @@ function trayItemStatusChange(menuItem, sendIpc = true) {
     const settings = configStore.get('settings')
     const isOpenCursor = [4,5].includes(menuItem.id)
     const isAutoStart = [1,2].includes(menuItem.id)
+    const isLiveWallpaper = [7,8].includes(menuItem.id)
     const status = menuItem.status
     if(isAutoStart) {
         setAutoLaunch(!status).then(res=>{
@@ -42,13 +46,26 @@ function trayItemStatusChange(menuItem, sendIpc = true) {
         configStore.set('settings',settings)
         if(settings.cursor.open){
             const allDisplays = ['fairyDust', 'emoji', 'bubble', 'snowflake', 'character'].includes(cursor.current)
-            createCursorWindow(allDisplays)
+            setCursorWindows(allDisplays)
         }else {
-            destroyCursorWindow()
+            unsetCursorWindows()
         }
         switchMenuItemShow(menuItem)
         if(sendIpc) {
             mainWin.webContents.send('tray-change-status', {name: menuItem.label, status: settings.cursor.open})
+        }
+    }
+    if(isLiveWallpaper) {
+        settings.liveWallpaper = !status
+        configStore.set('settings',settings)
+        if(settings.liveWallpaper){
+            setLiveWindows()
+        } else {
+            unsetLiveWindows()
+        }
+        switchMenuItemShow(menuItem)
+        if(sendIpc) {
+            mainWin.webContents.send('tray-change-status', {name: menuItem.label, status: settings.liveWallpaper})
         }
     }
 
@@ -68,7 +85,7 @@ function createTray(mainWindow) {
     tray.setToolTip('wallpaper');
     tray.on('double-click', () => {
         // 打开主窗口
-        mainWindow.show()
+        mainWin.show()
     });
     tray.setContextMenu(contextMenu);
 }

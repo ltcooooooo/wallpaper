@@ -8,7 +8,7 @@
 <script setup>
 import { ref, markRaw } from 'vue'
 import FavoriteImage from '../components/FavoriteImage.vue'
-// import LocalVideo from '../components/LocalVideo.vue'
+import FavoriteVideo from '../components/FavoriteVideo.vue'
 import { usePage } from '../composables/usePageTabs'
 
 const tabOptions = ref([
@@ -18,12 +18,12 @@ const tabOptions = ref([
     component: markRaw(FavoriteImage),
     active: true
   },
-  // {
-  //   name: 'video',
-  //   label: '视频壁纸',
-  //   component: markRaw(LocalVideo),
-  //   active: false
-  // }
+  {
+    name: 'video',
+    label: '视频壁纸',
+    component: markRaw(FavoriteVideo),
+    active: false
+  }
 ])
 
 const { currentComponent, changeTab } = usePage(tabOptions)
