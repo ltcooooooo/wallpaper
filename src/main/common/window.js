@@ -124,7 +124,6 @@ export let liveWindows = [];
 function setLiveWindows() {
     // 创建多屏窗口
     const screenAll = screen.getAllDisplays();
-    console.log('screenAll', screenAll)
     for (const display of screenAll) {
         const bounds = display.bounds;
         liveWindows.push(liveWinInstance(bounds));

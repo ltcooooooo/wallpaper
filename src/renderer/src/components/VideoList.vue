@@ -37,28 +37,22 @@ import { reactive, computed } from "vue";
 import { getVideoList } from "../api/video";
 import { filesize } from "filesize";
 
-// const { params } = useSearchParame();
-
 const wallpaperList = reactive([]);
 const params = reactive({
   page: 1,
   pageSize: 10,
 })
-// const page = reactive({
-//   current: 1,
-//   pageSize: 2,
-// });
 
 const loadMore = reactive({
-  scrollLoad: false,
+  scrollLoad: true,
   loading: false,
   reLoading: false,
   noMore: computed(
-    () => page.total === page.current && !loadMore.loading && !loadMore.reLoading
+    () => params.total === params.page && !loadMore.loading && !loadMore.reLoading
   ),
   scrollLoadFn: () => {
     if (loadMore.loading || loadMore.noMore || loadMore.reLoading) return;
-    page.current++;
+    params.page++;
     getWallpaperList();
   },
   reloadingFn: () => {
@@ -72,12 +66,8 @@ async function getWallpaperList() {
   loadMore.loading = true;
   // params.page = page.current;
   try {
-    const res = await getVideoList(params);
-    console.log(res);
     const { videos, total } = await getVideoList(params);
-    // videos.forEach(video => {
-    //   video.smallSrc = video.cover;
-    // });
+    params.total = Math.ceil(total / params.pageSize);
     wallpaperList.push(...videos);
     loadMore.loading = false;
     if (loadMore.reLoading) reLoading = false;
@@ -89,7 +79,7 @@ async function getWallpaperList() {
 }
 
 function init() {
-  // page.current = 1;
+  params.page= 1;
   wallpaperList.length = 0;
   getWallpaperList(params);
 }
