@@ -24,7 +24,7 @@
         </div>
         <div class="flex items-center text-nowrap">
             <span class="text-right" :style="{minWidth: labelWidth}">当前视频：</span>
-            <u class="text-blue-500 cursor-pointer overflow-hidden text-ellipsis" :title="setting.livePath ?? '无'">{{ setting.livePath ?? '无' }}</u>
+            <u class="text-blue-500 cursor-pointer overflow-hidden text-ellipsis" :title="setting.livePath || '无'">{{ setting.livePath || '无' }}</u>
             <el-button type="primary" class="ml-2" size="small" @click="setting.livePath ? openPath(setting.livePath) : null"><i-ms-folder-open-outline-rounded/></el-button>
         </div>
     </div>

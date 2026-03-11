@@ -2,6 +2,7 @@ import { BrowserWindow, screen, shell } from "electron";
 import { is } from '@electron-toolkit/utils'
 import { join } from 'path'
 import { set } from "wallpaper";
+import { attach, detach, reset } from "electron-as-wallpaper"
 
 import icon from '../../../resources/icon.png?asset'
 
@@ -18,7 +19,6 @@ function createMainWindow() {
     maxWidth: 1280,
     show: false,
     autoHideMenuBar: true,
-    skipTaskbar: true,
     frame: false,
     transparent: true,
     minimizable: false,
@@ -124,6 +124,7 @@ export let liveWindows = [];
 function setLiveWindows() {
     // 创建多屏窗口
     const screenAll = screen.getAllDisplays();
+    console.log('screenAll', screenAll)
     for (const display of screenAll) {
         const bounds = display.bounds;
         liveWindows.push(liveWinInstance(bounds));
@@ -132,19 +133,23 @@ function setLiveWindows() {
 
 function unsetLiveWindows() {
     for (const live of liveWindows) {
+        detach(live)
         live.destroy();
     }
     liveWindows.length = 0;
 }
 
 function liveWinInstance(bounds) {
+  const platform =  process.platform
+  console.log('platform', platform)
   const liveWindow = new BrowserWindow({
       transparent: true,
       show: false,
       frame: false,
       roundedCorners: false,
       focusable: false,
-      type: 'desktop',
+      ...(platform === 'darwin' ? { type: 'desktop' } : {}),
+      ...(platform === 'win32' ? { autoHideMenuBar: true, skipTaskbar: true} : {}),
       webPreferences: {
           preload: join(__dirname, '../preload/index.js'),
           sandbox: false,
@@ -152,16 +157,19 @@ function liveWinInstance(bounds) {
           webSecurity: import.meta.env.PROD == true
       }
   })
+  liveWindow.setBounds(bounds)
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
         liveWindow.loadURL(process.env['ELECTRON_RENDERER_URL'] + '#/liveWindow')
     } else {
         liveWindow.loadFile(join(__dirname, '../renderer/index.html'), {hash: '#/liveWindow'})
     }
     liveWindow.on('ready-to-show', () => {
+        if(platform === 'win32') {
+            attach(liveWindow)
+        }
         liveWindow.show()
     })
     // liveWindow.openDevTools()
-    liveWindow.setBounds(bounds)
     return liveWindow
 }
 
