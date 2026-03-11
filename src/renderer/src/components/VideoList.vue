@@ -40,7 +40,7 @@ import { filesize } from "filesize";
 const wallpaperList = reactive([]);
 const params = reactive({
   page: 1,
-  pageSize: 10,
+  pageSize: 12,
 })
 
 const loadMore = reactive({

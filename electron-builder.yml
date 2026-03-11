@@ -12,6 +12,7 @@ asarUnpack:
   - resources/**
   - node_modules/sharp/**
   - node_modules/@img/**
+  - node_modules/sqlite3/**
 win:
   executableName: wallpaper
 nsis:
