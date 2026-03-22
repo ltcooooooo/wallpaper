@@ -7,20 +7,20 @@
 + 可系统级应用多种鼠标光标跟随效果。
 
 ### 应用内截图
-![](readme\images\软件主页面.png)
+![](readme\images\hone_page.png)
 
 <hr/>
 
-![](readme\images\鼠标光标效果.png)
+![](readme\images\cursor_page.png)
 
 ### 一键设置为图片壁纸
-![](readme\images\设置为图片壁纸.gif)
+![](readme\images\image_wallpaper.gif)
 
 ### 一键设置为动态壁纸
-![](readme\images\设置为动态壁纸.gif)
+![](readme\images\live_wallpaper.gif)
 
 ### 设置鼠标光标效果
-![](readme\images\设置鼠标光标效果.gif)
+![](readme\images\cursor.gif)
 
 ## 下载
 > Release内下载对应平台安装包。
