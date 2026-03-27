@@ -2,13 +2,28 @@ import { BrowserWindow, screen, shell } from "electron";
 import { is } from '@electron-toolkit/utils'
 import { join } from 'path'
 import { set } from "wallpaper";
-import { attach, detach, reset } from "electron-as-wallpaper"
 
 import icon from '../../../resources/icon.png?asset'
 
 import { openCursor, openLive } from './startOpenWin'
 
 import registerUpdateService from '../core/update'
+
+let attach, detach, reset;
+async function initWallpaperModule() {
+  if (process.platform === 'win32') {
+    try {
+      const winAsWallpaper = await import('electron-as-wallpaper');
+      attach = winAsWallpaper.attach;
+      detach = winAsWallpaper.detach;
+      reset = winAsWallpaper.reset;
+    } catch (error) {
+      console.error('加载electron-as-wallpaper模块失败:', error);
+    }
+  }
+}
+// 初始化仅win平台下的模块
+initWallpaperModule();
 
 function createMainWindow() {
   const mainWindow = new BrowserWindow({
